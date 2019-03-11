@@ -1,12 +1,12 @@
 const generate = require('./controllers/generate-nf')
     , choiceTemplate = require('./templates/choice-template')
     , request = require('request')
-    , fs = require('fs');
+    , fs = require('fs')
+    , xmlDom = require('xmldom').DOMParser;
 
 function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
     return new Promise((resolve, reject) => {
         try {
-            console.log(xmlEnveloped);
             var options = {
                 method: 'POST',
                 url: url,
@@ -30,14 +30,17 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
             }
         
             request(options, function(error, response, body) {
-                console.log(response);
                 if (error) {
                     return {
                         error: error
                     }
                 }
+
+                let xmlDoc          = response.body;
+                let xmlParser       = new xmlDom().parseFromString(xmlDoc, 'text/xml');
+                let xmlOutPutXml    = xmlParser.getElementsByTagName('outputXML')[0].childNodes[0].nodeValue;
                 
-                resolve(response);
+                resolve(xmlOutPutXml);
             });
         } catch (error) {
             console.log(error);
@@ -46,7 +49,7 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
     })
 }
 
-const postInvoice = function(invoiceType, object) {
+const postInvoice       = function(invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.createInvoiceModel(invoiceType, object, 'postInvoice')
         .then(postInvoiceResponse => {
@@ -55,7 +58,6 @@ const postInvoice = function(invoiceType, object) {
                 resolve(webServiceResponse);
             })
             .catch(webServiceResponseError => {
-                console.log(webServiceResponseError);
                 reject(webServiceResponseError);
             })
         })
@@ -66,27 +68,96 @@ const postInvoice = function(invoiceType, object) {
     })
 }
 
-const searchSituation = function(object) {
-    var envelopXml = choiceTemplate.choiceTemplate(object);
-    var response    = webServiceRequest(envelopXml, url, soapAction);
-    return response; 
+const searchSituation   = function(invoiceType, object) {
+    return new Promise((resolve, reject) => {
+        choiceTemplate.searchSituacionInvoiceModel(invoiceType, object, 'searchSituation')
+            .then(postSearchSituationResponse => {
+                webServiceRequest(postSearchSituationResponse.soapEnvelop, postSearchSituationResponse.url, postSearchSituationResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    }).catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
+            }).catch(postSearchSituationResponseError => {
+                console.log(postSearchSituationResponseError);
+                return postSearchSituationResponseError;
+            });
+    })
 } 
 
-const searchInvoice = function(object) {
-    var envelopXml = choiceTemplate.choiceTemplate(object);
-    var response    = webServiceRequest(envelopXml, url, soapAction);
-    return response; 
+const searchRpsLot      = function (invoiceType, object) {
+    return new Promise((resolve, reject) => {
+        choiceTemplate.searchRpsLotModel(invoiceType, object, 'searchRpsLot')
+            .then(postSearchRpsLotResponse => {
+                webServiceRequest(postSearchRpsLotResponse.soapEnvelop, postSearchRpsLotResponse.url, postSearchRpsLotResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    }).catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
+            }).catch(postSearchRpsLotResponseError => {
+                console.log(postSearchRpsLotResponseError);
+                return postSearchRpsLotResponseError;
+            });
+    })
 } 
 
-const cancelInvoice = function(object) {
-    var envelopXml = choiceTemplate.escolhaTemplate(object);    
-    var response    = webServiceRequest(envelopXml, url, soapAction);
-    return response;
+const searchNfseByRps   = function (invoiceType, object) {
+    return new Promise((resolve, reject) => {
+        choiceTemplate.searchNfseByRpsModel(invoiceType, object, 'searchNfseByRps')
+            .then(postSearchRpsLotResponse => {
+                webServiceRequest(postSearchRpsLotResponse.soapEnvelop, postSearchRpsLotResponse.url, postSearchRpsLotResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    }).catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
+            }).catch(postSearchRpsLotResponseError => {
+                console.log(postSearchRpsLotResponseError);
+                return postSearchRpsLotResponseError;
+            });
+    })
+}
+
+const searchInvoice     = function(invoiceType, object) {
+    return new Promise((resolve, reject) => {
+        choiceTemplate.searchInvoiceModel(invoiceType, object, 'searchInvoice')
+            .then(postSearchInvoiceResponse => {
+                webServiceRequest(postSearchInvoiceResponse.soapEnvelop, postSearchInvoiceResponse.url, postSearchInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    }).catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
+            }).catch(postSearchInvoiceResponseError => {
+                console.log(postSearchInvoiceResponseError);
+                return postSearchInvoiceResponseError;
+            });
+    })
+} 
+
+const cancelInvoice     = function(invoiceType, object) {
+    return new Promise((resolve, reject) => {
+        choiceTemplate.cancelInvoiceModel(invoiceType, object, 'cancelInvoice')
+            .then(postCancelInvoiceResponse => {
+                webServiceRequest(postCancelInvoiceResponse.soapEnvelop, postCancelInvoiceResponse.url, postCancelInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    }).catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
+            }).catch(postCancelInvoiceResponseError => {
+                console.log(postCancelInvoiceResponseError);
+                return postCancelInvoiceResponseError;
+            });
+    })
 }
 
 module.exports = {
     postInvoice,
     searchSituation,
     searchInvoice,
-    cancelInvoice
+    cancelInvoice,
+    searchRpsLot,
+    searchNfseByRps
 }

@@ -120,10 +120,91 @@ const objectItu = {
 	}]
 }
 
-nodenf.postInvoice('nfse', objectMaceio, 'homologacao')
-.then(res => {
-    console.log(res.body);
-})
-.catch(err => { console.log(67);
-    console.log(err);
-})
+const objectRioSearchSituationAndSearchRpsLot = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio.pfx",
+		"senhaDoCertificado": "12345678",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3304557"
+	},
+	"prestador": {
+		"cnpj": "10393366000121",
+		"inscricaoMunicipal": "04386965"
+	},
+	"protocolo": "489"
+}
+
+const objectRioSearchNfseByRps = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio.pfx",
+		"senhaDoCertificado": "12345678",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3304557"
+	},
+	"identificacaoRps": {
+		"numero": 65,
+		"serie": "123",
+		"tipo": 1
+	},
+	"prestador": {
+		"cnpj": "10393366000121",
+		"inscricaoMunicipal": "04386965"
+	}
+}
+
+// const objectRioSearchInvoice = {
+// 	"config": {
+// 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio.pfx",
+// 		"senhaDoCertificado": "12345678",
+// 		"producaoHomologacao": "homologacao",
+// 		"codigoMunicipio": "3304557"
+// 	},
+// 	"prestador": {
+// 		"cnpj": "10393366000121",
+// 		"inscricaoMunicipal": "04386965"
+// 	},
+// 	"periodoEmissao": {
+// 		"dataInicial": "2019-01-29",
+// 		"dataFinal": "2019-01-29"
+// 	},
+// 	"tomador": {
+// 		"cpfCnpj": "12299281460"
+// 	}
+// }
+
+// nodenf.postInvoice('nfse', objectMaceio)
+// 	.then(res => {
+// 		console.log(res.body);
+// 	})
+// 	.catch(err => { console.log(67);
+// 		console.log(err);
+// 	})
+
+// nodenf.searchSituation('nfse', objectRioSearchSituationAndSearchRpsLot)
+// 	.then(res => {
+// 		console.log(res);
+// 	}).catch(err => {
+// 		console.log(err)
+// 	})
+
+// nodenf.searchRpsLot('nfse', objectRioSearchSituationAndSearchRpsLot)
+// 	.then(res => {
+// 		console.log(res);
+// 	}).catch(err => {
+// 		console.log(err);
+// 	})
+
+// nodenf.searchNfseByRps('nfse', objectRioSearchNfseByRps)
+// 	.then(res => {
+// 		console.log(res);
+// 	}).catch(err => {
+// 		console.log(err);
+// 	})
+
+// nodenf.searchInvoice('nfse', objectRioSearchInvoice)
+// 	.then(res => {
+// 		console.log(res);
+// 	}).catch(err => {
+// 		console.log(err);
+// 	})
+
