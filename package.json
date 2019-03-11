@@ -12,6 +12,7 @@
     "fs": "0.0.1-security",
     "pem": "^1.14.2",
     "request": "^2.88.0",
+    "xml-crypto": "^1.2.0",
     "xsd-schema-validator": "^0.6.0"
   }
 }

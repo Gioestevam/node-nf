@@ -1,1 +1,1 @@
-module.exports = require('./lib/choice-nf');
+module.exports = require('./src/choice-nf');
