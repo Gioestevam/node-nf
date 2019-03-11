@@ -1,0 +1,17 @@
+{
+  "name": "node-nf",
+  "version": "0.0.1",
+  "description": "Modulo gerador de NF-e, NFS-e, NFC-e e etc. OPEN SOURCE",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Giryco",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "pem": "^1.14.2",
+    "request": "^2.88.0",
+    "xsd-schema-validator": "^0.6.0"
+  }
+}
