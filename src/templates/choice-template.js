@@ -1,6 +1,6 @@
 var generateNfse = require('./nfse/generate-nfse');
 
-function createInvoiceModel(invoiceType, object, action) {
+function createLotInvoiceModel(invoiceType, object, action) {
     return new Promise((resolve, reject) => {
         if (invoiceType === 'nfe') {
     
@@ -135,7 +135,39 @@ function cancelInvoiceModel(invoiceType, object, action) {
     }) 
 }
 
+function createInvoiceModel(invoiceType, object, action) {
+    return new Promise((resolve, reject) => {
+        if (invoiceType === 'nfe') {
+            
+        }
+        if (invoiceType === 'nfse') {
+            return generateNfse.chooseModel(object, action)
+            .then(nfseXml => {
+                resolve(nfseXml);
+            })
+            .catch(errorNfseXml => {
+                console.log(errorNfseXml);
+                reject(errorNfseXml);
+            })
+        }
+        if (invoiceType === 'cte') {
+    
+        }
+        if (invoiceType === 'nfce') {
+    
+        }
+        if (invoiceType === 'danfe') {
+    
+        }
+        if (invoiceType === 'darf') {
+    
+        }
+    })   
+}
+
+
 module.exports = {
+    createLotInvoiceModel,
     createInvoiceModel,
     searchSituacionInvoiceModel,
     searchRpsLotModel,

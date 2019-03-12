@@ -1,7 +1,7 @@
 
 function createXml(object, action) {
     switch (action) {
-        case 'postInvoice':
+        case 'postLotInvoice':
             
             break;
     

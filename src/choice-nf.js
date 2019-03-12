@@ -49,11 +49,11 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
     })
 }
 
-const postInvoice       = function(invoiceType, object) {
+const postLotInvoice    = function(invoiceType, object) {
     return new Promise((resolve, reject) => {
-        choiceTemplate.createInvoiceModel(invoiceType, object, 'postInvoice')
-        .then(postInvoiceResponse => {
-            webServiceRequest(postInvoiceResponse.soapEnvelop, postInvoiceResponse.url, postInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+        choiceTemplate.createLotInvoiceModel(invoiceType, object, 'postLotInvoice')
+        .then(postLotInvoiceResponse => {
+            webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
             .then(webServiceResponse => {
                 resolve(webServiceResponse);
             })
@@ -61,9 +61,9 @@ const postInvoice       = function(invoiceType, object) {
                 reject(webServiceResponseError);
             })
         })
-        .catch(postInvoiceResponseError => {
-            console.log(postInvoiceResponseError);
-            return postInvoiceResponseError;
+        .catch(postLotInvoiceResponseError => {
+            console.log(postLotInvoiceResponseError);
+            return postLotInvoiceResponseError;
         });
     })
 }
@@ -153,7 +153,27 @@ const cancelInvoice     = function(invoiceType, object) {
     })
 }
 
+const postInvoice       = function (invoiceType, object) {
+    return new Promise((resolve, reject) => {
+        choiceTemplate.createInvoiceModel(invoiceType, object, 'postInvoice')
+        .then(postInvoiceResponse => {
+            webServiceRequest(postInvoiceResponse.soapEnvelop, postInvoiceResponse.url, postInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+            .then(webServiceResponse => {
+                resolve(webServiceResponse);
+            })
+            .catch(webServiceResponseError => {
+                reject(webServiceResponseError);
+            })
+        })
+        .catch(postInvoiceResponseError => {
+            console.log(postInvoiceResponseError);
+            return postInvoiceResponseError;
+        });
+    })    
+}
+
 module.exports = {
+    postLotInvoice,
     postInvoice,
     searchSituation,
     searchInvoice,

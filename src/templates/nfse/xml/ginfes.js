@@ -18,7 +18,7 @@ function createXml(object, action) {
     
     return new Promise((resolve, reject) => {
         switch (action) {
-            case 'postInvoice':
+            case 'postLotInvoice':
                 try {
                     const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
 

@@ -28,7 +28,7 @@ function createXml(object, action) {
                 });
             }
             switch (action) {
-                case 'postInvoice':
+                case 'postLotInvoice':
                     try {
 
                             let xml = '<EnviarLoteRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
@@ -246,42 +246,116 @@ function createXml(object, action) {
 
                 case 'cancelInvoice':
                     try {
-                        let xmlContent = '<Pedido xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
-                        xmlContent += '<InfPedidoCancelamento>';
-                        xmlContent += '<IdentificacaoNfse>';
-                        xmlContent += '<Numero>'+ object.identificacaoNfse.numero  +'</Numero>';
-                        xmlContent += '<Cnpj>'+ object.identificacaoNfse.cnpj  +'</Cnpj>';
-                        xmlContent += '<InscricaoMunicipal>'+ object.identificacaoNfse.inscricaoMunicipal+'</InscricaoMunicipal>';
-                        xmlContent += '</IdentificacaoNfse>';
-                        xmlContent += '<CodigoCancelamento>'+ object.InfPedidoCancelamento.codigoCancelamento +'</CodigoCancelamento>';
-                        xmlContent += '</InfPedidoCancelamento>';
-                        xmlContent += '</Pedido>';
-                        
-                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
-                        xml += '<soapenv:Header/>';
-                        xml += '<soapenv:Body>';
-                        xml += '<not:ConsultarNfseRequest>';
-                        xml += '<not:inputXML>';
-                        xml += '<![CDATA[';
-                        xml += '<CancelarNfseEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">'
-                        xml += xmlContent; 
-                        xml += ']]>';
-                        xml += '</CancelarNfseEnvio>'
-                        xml += '</not:inputXML>';
-                        xml += '</not:ConsultarNfseRequest>';
-                        xml += '</soapenv:Body>';
-                        xml += '</soapenv:Envelope>';
+                        let xml = '<Pedido xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        xml += '<InfPedidoCancelamento Id="Cancelamento_NF'+ object.infPedidoCancelamento.identificacaoNfse.numero +'">';
+                        xml += '<IdentificacaoNfse>';
+                        xml += '<Numero>'+ object.infPedidoCancelamento.identificacaoNfse.numero  +'</Numero>';
+                        xml += '<Cnpj>'+ object.infPedidoCancelamento.identificacaoNfse.cnpj  +'</Cnpj>';
+                        xml += '<InscricaoMunicipal>'+ object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal+'</InscricaoMunicipal>';
+                        xml += '<CodigoMunicipio>'+ object.infPedidoCancelamento.identificacaoNfse.codigoMunicipio+'</CodigoMunicipio>';
+                        xml += '</IdentificacaoNfse>';
+                        xml += '<CodigoCancelamento>'+ object.infPedidoCancelamento.codigoCancelamento +'</CodigoCancelamento>';
+                        xml += '</InfPedidoCancelamento>';
+                        xml += '</Pedido>';
 
-                        const result = {
-                            url: url,
-                            soapEnvelop: xml,
-                            soapAction: 'http://notacarioca.rio.gov.br/CancelarNfse'
-                        }
+                        createSignature(xml, cert, 'InfPedidoCancelamento').then(xmlSignature => {
+                            // validator.validateXML(xml, __dirname + '/../../resources/xsd/servico_enviar_lote_rps_envio_v03.xsd', function (err, result) {
+                            //     if (err) {
+                            //         return res.send({
+                            //             error: result
+                            //         })
+                            //     }
 
-                        resolve(result);
+                            //     if (!result.valid) {
+                            //         return res.send({
+                            //             invalid: result
+                            //         })
+                            //     }
+                            // });
+
+                            let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                            xml += '<soapenv:Header/>';
+                            xml += '<soapenv:Body>';
+                            xml += '<not:CancelarNfseRequest>';
+                            xml += '<not:inputXML>';
+                            xml += '<![CDATA[';
+                            xml += '<CancelarNfseEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">'
+                            xml += xmlSignature; 
+                            xml += '</CancelarNfseEnvio>'
+                            xml += ']]>';
+                            xml += '</not:inputXML>';
+                            xml += '</not:CancelarNfseRequest>';
+                            xml += '</soapenv:Body>';
+                            xml += '</soapenv:Envelope>';
+
+                            // console.log(xml);
+
+                            const result = {
+                                url: url,
+                                soapEnvelop: xml,
+                                soapAction: 'http://notacarioca.rio.gov.br/CancelarNfse'
+                            }
+    
+                            resolve(result);
+                        }).catch(err => {
+                            console.log(err);
+                        });
 
                     } catch (error) {
                         reject(error)
+                    }
+                    break;
+
+                case 'postInvoice':
+                    try {
+
+                            let xmlContent = '<GerarNfseEnvio xmlns="http://notacarioca.rio.gov.br/WSNacional/XSD/1/nfse_pcrj_v01.xsd">';
+
+                            addSignedXml(object, cert)
+                                .then(signedXmlRes => {
+                                    signedXmlRes.forEach(element => {
+                                        xmlContent += element;
+                                    });
+
+                                    xmlContent += '</GerarNfseEnvio>';
+                                        // validator.validateXML(xml, __dirname + '/../../resources/xsd/servico_enviar_lote_rps_envio_v03.xsd', function (err, result) {
+                                        //     if (err) {
+                                        //         return res.send({
+                                        //             error: result
+                                        //         })
+                                        //     }
+
+                                        //     if (!result.valid) {
+                                        //         return res.send({
+                                        //             invalid: result
+                                        //         })
+                                        //     }
+                                        // });
+
+                                    let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                                    xml += '<soapenv:Header/>';
+                                    xml += '<soapenv:Body>';
+                                    xml += '<not:GerarNfseRequest>';
+                                    xml += '<not:inputXML>';
+                                    xml += '<![CDATA[' + xmlContent + ']]>';
+                                    xml += '</not:inputXML>';
+                                    xml += '</not:GerarNfseRequest>';
+                                    xml += '</soapenv:Body>';
+                                    xml += '</soapenv:Envelope>';
+
+                                    const result = {
+                                        url: url,
+                                        soapEnvelop: xml,
+                                        soapAction: 'http://notacarioca.rio.gov.br/GerarNfse'
+                                    }
+
+                                    resolve(result);
+                                }).catch(err => {
+                                    console.log(err);
+                                });
+                        
+                    } catch (error) {
+                        reject(error);
                     }
                     break;
 
@@ -309,10 +383,10 @@ function addSignedXml(object, cert) {
                 prestadorIncricaoMunicipal = r.prestador.inscricaoMunicipal;
             }
             xmlToBeSigned += '<Rps>';
-            xmlToBeSigned += '<InfRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + 'RPS' + index + '">';
+            xmlToBeSigned += '<InfRps xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd" Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + 'RPS' + index + '">';
             xmlToBeSigned += '<IdentificacaoRps>';
             xmlToBeSigned += '<Numero>' + timestamp + index + '</Numero>';
-            xmlToBeSigned += '<Serie>RPS</Serie>';
+            xmlToBeSigned += '<Serie>'+ r.serie +'</Serie>';
             xmlToBeSigned += '<Tipo>' + r.tipo + '</Tipo>';
             xmlToBeSigned += '</IdentificacaoRps>';
             xmlToBeSigned += '<DataEmissao>' + r.dataEmissao + '</DataEmissao>';
