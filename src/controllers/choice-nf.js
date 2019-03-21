@@ -1,12 +1,11 @@
-const generate = require('./controllers/generate-nf')
-    , choiceTemplate = require('./templates/choice-template')
+const generate = require('./generate-nf')
+    , choiceTemplate = require('../templates/choice-template')
     , request = require('request')
     , fs = require('fs');
 
 function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
     return new Promise((resolve, reject) => {
         try {
-            console.log(xmlEnveloped);
             var options = {
                 method: 'POST',
                 url: url,
@@ -30,7 +29,6 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
             }
         
             request(options, function(error, response, body) {
-                console.log(response);
                 if (error) {
                     return {
                         error: error

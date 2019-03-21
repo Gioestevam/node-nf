@@ -1,4 +1,4 @@
-var generateNfse = require('./nfse/generate-nfse');
+var generateNfse = require('../controllers/generate-nfse');
 
 function createInvoiceModel(invoiceType, object, action) {
     return new Promise((resolve, reject) => {

@@ -1,1 +1,1 @@
-module.exports = require('./src/choice-nf');
+module.exports = require('./src/controllers/choice-nf');

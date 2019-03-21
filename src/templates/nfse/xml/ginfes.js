@@ -9,6 +9,7 @@ const xmlSignatureController = new XmlSignatureController();
  */
 const fs = require('fs');
 const pem = require('pem');
+const validator = require('xsd-schema-validator');
 
 const timestamp = Date.now();
 
@@ -30,6 +31,7 @@ function createXml(object, action) {
                                 error: err
                             });
                         }
+                        
                         let xml = '<ns3:EnviarLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_enviar_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:LoteRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + '">';
                         xml += '<ns4:NumeroLote>' + timestamp + '</ns4:NumeroLote>';
@@ -41,50 +43,46 @@ function createXml(object, action) {
                         addSignedXml(object, cert)
                             .then(signedXmlRes => {
                                 signedXmlRes.forEach(element => {
-                                    xml += element.replace(' xmlns:ns4=""', '');;
+                                    xml += element  ;
                                 });
                                 xml += '</ns4:ListaRps>';
                                 xml += '</ns3:LoteRps>';
                                 xml += '</ns3:EnviarLoteRpsEnvio>';
 
                                 createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
-                                    // validator.validateXML(xml, __dirname + '/../../resources/xsd/servico_enviar_lote_rps_envio_v03.xsd', function (err, result) {
-                                    //     if (err) {
-                                    //         return res.send({
-                                    //             error: result
-                                    //         })
-                                    //     }
+                                    validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_enviar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                                        if (err) {
+                                            console.log(err);
+                                            resolve(err);
+                                        }
 
-                                    //     if (!result.valid) {
-                                    //         return res.send({
-                                    //             invalid: result
-                                    //         })
-                                    //     }
-                                    // });
+                                        if (!validatorResult.valid) {
+                                            console.log(validatorResult);
+                                            resolve(validatorResult);
+                                        }
 
-                                    let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:hom="http://homologacao.ginfes.com.br">';
-                                    xml += '<soapenv:Header />';
-                                    xml += '<soapenv:Body>';
-                                    xml += '<hom:RecepcionarLoteRpsV3>';
-                                    xml += '<arg0>';
-                                    xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
-                                    xml += '<versaoDados>3</versaoDados>';
-                                    xml += '</ns2:cabecalho>';
-                                    xml += '</arg0>';
-                                    xml += '<arg1>';
-                                    xml += xmlSignature;
-                                    xml += '</arg1>';
-                                    xml += '</hom:RecepcionarLoteRpsV3>';
-                                    xml += '</soapenv:Body>';
-                                    xml += '</soapenv:Envelope>';
+                                        let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                        xml += '<soap:Body>';
+                                        xml += '<ns1:RecepcionarLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                        xml += '<arg0>';
+                                        xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                        xml += '<versaoDados>3</versaoDados>';
+                                        xml += '</ns2:cabecalho>';
+                                        xml += '</arg0>';
+                                        xml += '<arg1>';
+                                        xml += xmlSignature;
+                                        xml += '</arg1>';
+                                        xml += '</ns1:RecepcionarLoteRpsV3>';
+                                        xml += '</soap:Body>';
+                                        xml += '</soap:Envelope>';
 
-                                    const result = {
-                                        url: url,
-                                        soapEnvelop: xml,
-                                        soapAction: 'http://notacarioca.rio.gov.br/RecepcionarLoteRps'
-                                    }
-
-                                    resolve(result);
+                                        const result = {
+                                            url: url,
+                                            soapEnvelop: xml
+                                        }
+                                        
+                                        resolve(result);
+                                    });
                                 }).catch(err => {
                                     console.log(err);
                                 });
@@ -188,24 +186,24 @@ function addSignedXml(object, cert) {
             xmlToBeSignedArray.push(xmlToBeSigned);
 
         });
-        // resolve(xmlToBeSignedArray);
-        xmlToBeSignedArray.map((rps, index) => {
-            createSignature(rps, cert, 'InfRps')
-                .then(createdSignatureXml => {
-                    xmlSignedArray.push(createdSignatureXml);
+        resolve(xmlToBeSignedArray);
+        // xmlToBeSignedArray.map((rps, index) => {
+        //     createSignature(rps, cert, 'InfRps')
+        //         .then(createdSignatureXml => {
+        //             xmlSignedArray.push(createdSignatureXml);
 
-                    if ((xmlToBeSignedArray.length - 1) === index) {
-                        resolve(xmlSignedArray);
-                    }
-                }).catch(error => {
-                    const result = {
-                        message: 'Erro no map de createSignature',
-                        error: error
-                    }
+        //             if ((xmlToBeSignedArray.length - 1) === index) {
+        //                 resolve(xmlSignedArray);
+        //             }
+        //         }).catch(error => {
+        //             const result = {
+        //                 message: 'Erro no map de createSignature',
+        //                 error: error
+        //             }
 
-                    reject(result);
-                })
-        })
+        //             reject(result);
+        //         })
+        // })
     })
 }
 
