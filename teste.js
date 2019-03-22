@@ -300,7 +300,67 @@ const objectPortoAlegre = {
 	}]
 }
 
-nodenf.postInvoice('nfse', objectPortoAlegre, 'homologacao')
+const objectSaoJoseDosPinhais = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-sao-jose-dos-pinhais.pfx",
+		"senhaDoCertificado": "Endpr@20!8",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "4125506"
+	},
+	"emissor": {
+		"cnpj": "26390085000406		",
+		"inscricaoMunicipal": "28770820"
+	},
+	"rps": [{
+		"tipo": 1,
+		"dataEmissao": "2019-03-19T09:17:00",
+		"naturezaOperacao": "1",
+		"optanteSimplesNacional": "2",
+		"incentivadorCultural": "2",
+		"status": "1",
+		"servicos": [{
+			"valorServicos": 105.00,
+			"valorDeducoes": 0.00,
+			"valorPis": 0.00,
+			"valorCofins": 0.00,
+			"valorInss": 0.00,
+			"valorIr": 0.00,
+			"valorCsll": 0.00,
+			"issRetido": 2,
+			"valorIss": 2.10,
+			"baseCalculo": 105.00,
+			"aliquota": 0.0200,
+			"valorLiquidoNfse": 105.00,
+			"itemListaServico": "107",
+			"codigoTributacaoMunicipio": "6209100",
+			"discriminacao": "Ref. Servico Conforme O.S. Foi feito ajustes nas configuracoes do SITEF.;Foi feito a instalacao do PINPAD.;Foi feito testes de venda com cartao.",
+			"codigoMunicipío": "2704302"
+		}],
+		"prestador": {
+			"cnpj": "26390085000406		",
+			"inscricaoMunicipal": "28770820"
+		},
+		"tomador": {
+			"cnpjCpf": "08485955000198",
+			"inscricaoMunicipal": "900081220",
+			"razaoSocial": "JOALHERIA DIVINO ESPIRITO SANTO LTDA ME",
+			"endereco": {
+				"endereco": "R AGERSON DANTAS",
+				"numero": "66",
+				"bairro": "Centro",
+				"codigoMunicipio": "2704302",
+				"uf": "AL",
+				"cep": "57020310"
+			},
+			"contato": {
+				"telefone": "8232211212",
+				"email": "analu-melo@hotmail.com"
+			}
+		}
+	}]
+}
+
+nodenf.postInvoice('nfse', objectSaoJoseDosPinhais, 'homologacao')
 .then(res => {
     console.log(res);
 })
