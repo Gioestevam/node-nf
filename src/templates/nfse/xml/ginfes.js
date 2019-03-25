@@ -16,7 +16,7 @@ const timestamp = Date.now();
 function createXml(object, action) {
     var url = '';
     object.config.producaoHomologacao === 'producao' ? url = 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' : url = 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl';
-    
+
     return new Promise((resolve, reject) => {
         switch (action) {
             case 'postInvoice':
@@ -31,7 +31,7 @@ function createXml(object, action) {
                                 error: err
                             });
                         }
-                        
+
                         let xml = '<ns3:EnviarLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_enviar_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:LoteRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + '">';
                         xml += '<ns4:NumeroLote>' + timestamp + '</ns4:NumeroLote>';
@@ -43,7 +43,7 @@ function createXml(object, action) {
                         addSignedXml(object, cert)
                             .then(signedXmlRes => {
                                 signedXmlRes.forEach(element => {
-                                    xml += element  ;
+                                    xml += element;
                                 });
                                 xml += '</ns4:ListaRps>';
                                 xml += '</ns3:LoteRps>';
@@ -80,7 +80,7 @@ function createXml(object, action) {
                                             url: url,
                                             soapEnvelop: xml
                                         }
-                                        
+
                                         resolve(result);
                                     });
                                 }).catch(err => {
@@ -93,6 +93,73 @@ function createXml(object, action) {
                 }
                 break;
 
+            case 'cancelInvoice':
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: retorno.body.config.senha
+                    }, (err, cert) => {
+                        if (err) {
+                            return res.send({
+                                error: err
+                            });
+                        }
+                        let xml = '<ns3:Pedido xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns4:InfPedidoCancelamento Id="Cancelamento_NF' + retorno.body.nfse.numero + '">';
+                        xml += '<ns4:IdentificacaoNfse>';
+                        xml += '<ns4:Numero>' + retorno.body.nfse.numero + '</Numero>';
+                        xml += '<ns4:Cnpj>' + retorno.body.nfse.tomador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + retorno.body.nfse.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        xml += '<ns4:CodigoMunicipio>' + retorno.body.nfse.tomador.codigoMunicipio + '</CodigoMunicipio>';
+                        xml += '</ns4:IdentificacaoNfse>';
+                        xml += '<ns4:CodigoCancelamento>' + retorno.body.nfse.codigoCancelamento + '</CodigoCancelamento>';
+                        xml += '</ns4:InfPedidoCancelamento>';
+                        xml += '</ns3:Pedido>';
+
+                        createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_enviar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:CancelarNfseEnvio xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</ns2:cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:CancelarNfseEnvio>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+
+                } catch (error) {
+                    reject(error);
+                }
+                break;
             default:
                 break;
         }
