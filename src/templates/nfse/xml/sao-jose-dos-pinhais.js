@@ -16,10 +16,10 @@ const timestamp = Date.now();
 function createXml(object, action) {
     var url = '';
     object.config.producaoHomologacao === 'producao' ? url = 'https://nfe.sjp.pr.gov.br/servicos/issOnline2/ws/index.php?wsdl' : url = 'https://nfe.sjp.pr.gov.br/servicos/issOnline2/homologacao/ws/index.php?wsdl';
-    
+
     return new Promise((resolve, reject) => {
         switch (action) {
-            case 'postInvoice':
+            case 'postLotInvoice':
                 try {
                     const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
 
@@ -31,7 +31,7 @@ function createXml(object, action) {
                                 error: err
                             });
                         }
-                        
+
                         let xml = '<EnviarLoteRpsEnvio xmlns="http://nfe.sjp.pr.gov.br/servico_enviar_lote_rps_envio_v03.xsd">';
                         xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + '">';
                         xml += '<NumeroLote xmlns="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">' + timestamp + '</NumeroLote>';
@@ -43,28 +43,28 @@ function createXml(object, action) {
                         addSignedXml(object, cert)
                             .then(signedXmlRes => {
                                 signedXmlRes.forEach(element => {
-                                    xml += element  ;
+                                    xml += element;
                                 });
                                 xml += '</ListaRps>';
                                 xml += '</LoteRps>';
                                 xml += '</EnviarLoteRpsEnvio>';
 
                                 createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
-                                    validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_enviar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
-                                        // if (err) {
-                                        //     console.log(err);
-                                        //     resolve(err);
-                                        // }
+                                    validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/sao-jose-dos-pinhais/servico_enviar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                                        if (err) {
+                                            console.log(err);
+                                            resolve(err);
+                                        }
 
-                                        // if (!validatorResult.valid) {
-                                        //     console.log(validatorResult);
-                                        //     resolve(validatorResult);
-                                        // }
+                                        if (!validatorResult.valid) {
+                                            console.log(validatorResult);
+                                            resolve(validatorResult);
+                                        }
 
-                                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:nfe="http://nfe.sjp.pr.gov.br">';
+                                        let xml = '<soap:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://nfe.sjp.pr.gov.br">';
                                         xml += '<soap:Header />';
                                         xml += '<soap:Body>';
-                                        xml += '<RecepcionarLoteRpsV3>';
+                                        xml += '<ns1:RecepcionarLoteRpsV3>';
                                         xml += '<arg0>';
                                         xml += '<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
                                         xml += '<versaoDados>3</versaoDados>';
@@ -73,7 +73,7 @@ function createXml(object, action) {
                                         xml += '<arg1>';
                                         xml += xmlSignature;
                                         xml += '</arg1>';
-                                        xml += '</RecepcionarLoteRpsV3>';
+                                        xml += '</ns1:RecepcionarLoteRpsV3>';
                                         xml += '</soap:Body>';
                                         xml += '</soap:Envelope>';
 
@@ -81,7 +81,7 @@ function createXml(object, action) {
                                             url: url,
                                             soapEnvelop: xml
                                         }
-                                        
+
                                         resolve(result);
                                     });
                                 }).catch(err => {
@@ -94,6 +94,141 @@ function createXml(object, action) {
                 }
                 break;
 
+            case 'cancelInvoice':
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: object.config.senhaDoCertificado
+                    }, (err, cert) => {
+                        if (err) {
+                            return res.send({
+                                error: err
+                            });
+                        }
+                        let xml = '<ns3:Pedido xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns4:InfPedidoCancelamento Id="Cancelamento_NF' + object.infPedidoCancelamento.identificacaoNfse.numero + '">';
+                        xml += '<ns4:IdentificacaoNfse>';
+                        xml += '<ns4:Numero>' + object.infPedidoCancelamento.identificacaoNfse.numero + '</Numero>';
+                        xml += '<ns4:Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        xml += '<ns4:CodigoMunicipio>' + object.infPedidoCancelamento.identificacaoNfse.codigoMunicipio + '</CodigoMunicipio>';
+                        xml += '</ns4:IdentificacaoNfse>';
+                        xml += '<ns4:CodigoCancelamento>' + object.infPedidoCancelamento.identificacaoNfse.codigoCancelamento + '</CodigoCancelamento>';
+                        xml += '</ns4:InfPedidoCancelamento>';
+                        xml += '</ns3:Pedido>';
+
+                        createSignature(xml, cert, 'InfPedidoCancelamento').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_cancelar_nfse_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:CancelarNfseEnvio xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</ns2:cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:CancelarNfseEnvio>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+
+                } catch (error) {
+                    reject(error);
+                }
+                break;
+
+            case 'searchNfseByRps':
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: object.config.senhaDoCertificado
+                    }, (err, cert) => {
+                        if (err) {
+                            return res.send({
+                                error: err
+                            });
+                        }
+                        let xml = '<ns3:IdentificacaoRps xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns4:Numero>' + object.infPedidoCancelamento.identificacaoNfse.numero + '</Numero>';
+                        xml += '<ns4:Serie>' + object.infPedidoCancelamento.identificacaoNfse.serie + '</Serie>';
+                        xml += '<ns4:Tipo>' + object.infPedidoCancelamento.identificacaoNfse.tipo + '</Tipo>';
+                        xml += '</ns4:IdentificacaoRps>';
+                        xml += '<ns4:Prestador>';
+                        xml += '<ns4:Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        xml += '</ns4:Prestador>';
+
+                        createSignature(xml, cert, 'InfPedidoCancelamento').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_cancelar_nfse_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://nfe.sjp.pr.gov.br">';
+                                xml += '<soap:Header />';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:RecepcionarLoteRpsV3>';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:RecepcionarLoteRpsV3>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+
+                } catch (error) {
+                    reject(error);
+                }
+                break;
+            
             default:
                 break;
         }

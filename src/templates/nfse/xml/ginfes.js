@@ -19,7 +19,7 @@ function createXml(object, action) {
 
     return new Promise((resolve, reject) => {
         switch (action) {
-            case 'postInvoice':
+            case 'postLotInvoice':
                 try {
                     const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
 
@@ -98,27 +98,30 @@ function createXml(object, action) {
                     const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
 
                     pem.readPkcs12(pfx, {
-                        p12Password: retorno.body.config.senha
+                        p12Password: object.config.senhaDoCertificado
                     }, (err, cert) => {
                         if (err) {
                             return res.send({
                                 error: err
                             });
                         }
-                        let xml = '<ns3:Pedido xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
-                        xml += '<ns4:InfPedidoCancelamento Id="Cancelamento_NF' + retorno.body.nfse.numero + '">';
+                        console.log(object);
+                        let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<Pedido>';
+                        xml += '<ns4:InfPedidoCancelamento Id="Cancelamento_NF' + object.infPedidoCancelamento.identificacaoNfse.numero + '">';
                         xml += '<ns4:IdentificacaoNfse>';
-                        xml += '<ns4:Numero>' + retorno.body.nfse.numero + '</Numero>';
-                        xml += '<ns4:Cnpj>' + retorno.body.nfse.tomador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + retorno.body.nfse.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
-                        xml += '<ns4:CodigoMunicipio>' + retorno.body.nfse.tomador.codigoMunicipio + '</CodigoMunicipio>';
+                        xml += '<ns4:Numero>' + object.infPedidoCancelamento.identificacaoNfse.numero + '</ns4:Numero>';
+                        xml += '<ns4:Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '<ns4:CodigoMunicipio>' + object.infPedidoCancelamento.identificacaoNfse.codigoMunicipio + '</ns4:CodigoMunicipio>';
                         xml += '</ns4:IdentificacaoNfse>';
-                        xml += '<ns4:CodigoCancelamento>' + retorno.body.nfse.codigoCancelamento + '</CodigoCancelamento>';
+                        xml += '<ns4:CodigoCancelamento>' + object.infPedidoCancelamento.codigoCancelamento + '</ns4:CodigoCancelamento>';
                         xml += '</ns4:InfPedidoCancelamento>';
-                        xml += '</ns3:Pedido>';
+                        xml += '</Pedido>';
+                        xml += '</ns3:CancelarNfseEnvio>';
 
-                        createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
-                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_enviar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                        createSignature(xml, cert, 'InfPedidoCancelamento').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_cancelar_nfse_envio_v03.xsd', function (err, validatorResult) {
                                 if (err) {
                                     console.log(err);
                                     resolve(err);
@@ -130,8 +133,9 @@ function createXml(object, action) {
                                 }
 
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Header/>';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:CancelarNfseEnvio xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:CancelarNfseV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
                                 xml += '<arg0>';
                                 xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                 xml += '<versaoDados>3</versaoDados>';
@@ -140,7 +144,7 @@ function createXml(object, action) {
                                 xml += '<arg1>';
                                 xml += xmlSignature;
                                 xml += '</arg1>';
-                                xml += '</ns1:CancelarNfseEnvio>';
+                                xml += '</ns1:CancelarNfseV3>';
                                 xml += '</soap:Body>';
                                 xml += '</soap:Envelope>';
 
@@ -160,6 +164,286 @@ function createXml(object, action) {
                     reject(error);
                 }
                 break;
+
+            case 'searchRpsLot':
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: object.config.senhaDoCertificado
+                    }, (err, cert) => {
+                        if (err) {
+                            resolve({
+                                error: err
+                            });
+                        }
+
+                        let xml = '<ns3:ConsultarLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns3:Prestador>';
+                        xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '</ns3:Prestador>';
+                        xml += '<ns3:Protocolo>' + object.protocolo + '</ns3:Protocolo>';
+                        xml += '</ns3:ConsultarLoteRpsEnvio>';
+
+                        createSignature(xml, cert, 'ConsultarLoteRpsEnvio').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(xmlSignature);
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(xmlSignature);
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:ConsultarLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</ns2:cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:ConsultarLoteRpsV3>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+                } catch (error) {
+                    reject(error);
+                }
+                break;
+
+            case 'searchNfseByRps': //Not working
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: object.config.senhaDoCertificado
+                    }, (err, cert) => {
+                        if (err) {
+                            return res.send({
+                                error: err
+                            });
+                        }
+                        let xml = '<ns3:ConsultarNfseRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns3:IdentificacaoRps>';
+                        xml += '<ns4:Numero>' + object.identificacaoRps.numero + '</ns4:Numero>';
+                        xml += '<ns4:Serie>' + object.identificacaoRps.serie + '</ns4:Serie>';
+                        xml += '<ns4:Tipo>' + object.identificacaoRps.tipo + '</ns4:Tipo>';
+                        xml += '</ns3:IdentificacaoRps>';
+                        xml += '<ns3:Prestador>';
+                        xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '</ns3:Prestador>';
+                        xml += '</ns3:ConsultarNfseRpsEnvio>';
+
+
+                        createSignature(xml, cert, 'ConsultarNfseRpsEnvio').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_cancelar_nfse_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:ConsultarNfsePorRps xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</ns2:cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:ConsultarNfsePorRps>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+
+                } catch (error) {
+                    reject(error);
+                }
+                break;
+
+            case 'searchSituation':
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: object.config.senhaDoCertificado
+                    }, (err, cert) => {
+                        if (err) {
+                            return res.send({
+                                error: err
+                            });
+                        }
+                        console.log(object.prestador);
+                        let xml = '<ns3:ConsultarSituacaoLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_situacao_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns3:Prestador>';
+                        xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '</ns3:Prestador>';
+                        xml += '<ns3:Protocolo>' + object.protocolo + '</ns3:Protocolo>';
+                        xml += '</ns3:ConsultarSituacaoLoteRpsEnvio>';
+
+                        createSignature(xml, cert, 'ConsultarSituacaoLoteRpsEnvio').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_situacao_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:ConsultarSituacaoLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</ns2:cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:ConsultarSituacaoLoteRpsV3>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+
+                } catch (error) {
+                    reject(error);
+                }
+                break;
+
+            case 'searchInvoice':
+                try {
+                    const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
+
+                    pem.readPkcs12(pfx, {
+                        p12Password: object.config.senhaDoCertificado
+                    }, (err, cert) => {
+                        if (err) {
+                            return res.send({
+                                error: err
+                            });
+                        }
+                        console.log(object.prestador);
+                        let xml = '<ns3:ConsultarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
+                        xml += '<ns3:Prestador>';
+                        xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '</ns3:Prestador>';
+                        xml += '<ns3:PeriodoEmissao>';
+                        xml += '<ns3:DataInicial>' + object.periodoEmissao.dataInicial + '</ns4:DataInicial>';
+                        xml += '<ns3:DataFinal>' + object.periodoEmissao.dataFinal + '</ns4:DataFinal>';
+                        xml += '</ns3:PeriodoEmissao>';
+                        // xml += '<ns3:Tomador>';
+                        // xml += '<ns4:CpfCnpj>';
+                        // if (object.tomador.cnpjCpf.replace(/\.|\/|\-|\s/g, '').length === 11) {
+                        //     xml += '<ns4:Cpf>' + object.tomador.cnpjCpf.replace(/\.|\/|\-|\s/g, '') + '<ns4:Cpf>';
+                        // }
+
+                        // if (object.tomador.cnpjCpf.replace(/\.|\/|\-|\s/g, '').length === 14) {
+                        //     xml += '<ns4:Cnpj>' + object.tomador.cnpjCpf.replace(/\.|\/|\-|\s/g, '') + '<ns4:Cnpj>';
+                        // }
+                        // xml += '</ns4:CpfCnpj>';
+                        // xml += '</ns3:Tomador>';
+                        xml += '</ns3:ConsultarNfseEnvio>';
+
+                        createSignature(xml, cert, 'ConsultarNfseEnvio').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_nfse_envio_v03.xsd', function (err, validatorResult) {
+                                if (err) {
+                                    console.log(err);
+                                    resolve(err);
+                                }
+
+                                if (!validatorResult.valid) {
+                                    console.log(validatorResult);
+                                    resolve(validatorResult);
+                                }
+
+                                let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+                                xml += '<soap:Body>';
+                                xml += '<ns1:ConsultarSituacaoLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<arg0>';
+                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<versaoDados>3</versaoDados>';
+                                xml += '</ns2:cabecalho>';
+                                xml += '</arg0>';
+                                xml += '<arg1>';
+                                xml += xmlSignature;
+                                xml += '</arg1>';
+                                xml += '</ns1:ConsultarSituacaoLoteRpsV3>';
+                                xml += '</soap:Body>';
+                                xml += '</soap:Envelope>';
+
+                                const result = {
+                                    url: url,
+                                    soapEnvelop: xml
+                                }
+
+                                resolve(result);
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    });
+
+                } catch (error) {
+                    reject(error);
+                }
+                break;
+
             default:
                 break;
         }
@@ -212,7 +496,9 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<ns4:ValorLiquidoNfse>' + s.valorLiquidoNfse + '</ns4:ValorLiquidoNfse>';
                 xmlToBeSigned += '</ns4:Valores>';
                 xmlToBeSigned += '<ns4:ItemListaServico>' + s.itemListaServico + '</ns4:ItemListaServico>';
-                xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
+                if (s.codigoTributacaoMunicipio) {                    
+                    xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
+                }
                 xmlToBeSigned += '<ns4:Discriminacao>' + s.discriminacao + '</ns4:Discriminacao>';
                 xmlToBeSigned += '<ns4:CodigoMunicipio>' + s.codigoMunicipío + '</ns4:CodigoMunicipio>';
                 xmlToBeSigned += '</ns4:Servico>';

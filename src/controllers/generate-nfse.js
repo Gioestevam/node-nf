@@ -7,7 +7,7 @@ function chooseModel (object, action) {
     return new Promise((resolve, reject) => {
         const codigoMunicipio = object.config.codigoMunicipio;
 
-        if (codigoMunicipio === '2704302' || codigoMunicipio === '3523909' || codigoMunicipio === '3513801') {
+        if (codigoMunicipio === '2704302' || codigoMunicipio === '3523909' || codigoMunicipio === '3513801' || codigoMunicipio === '3118601') {
             ginfes.createXml(object, action)
                 .then(xmlFromGinfes => {
                     resolve(xmlFromGinfes);
@@ -39,11 +39,11 @@ function chooseModel (object, action) {
 
         if (codigoMunicipio === '4125506') {
             saoJoseDosPinhais.createXml(object, action)
-                .then(xmlFromRioDeJaneiro => {
-                    resolve(xmlFromRioDeJaneiro);
+                .then(xmlFromSaoJoseDosPinhais => {
+                    resolve(xmlFromSaoJoseDosPinhais);
                 })
-                .catch(errorRioDeJaneiro => {
-                    reject(errorRioDeJaneiro);
+                .catch(errorSaoJoseDosPinhais => {
+                    reject(errorSaoJoseDosPinhais);
                 });
         }
     })
