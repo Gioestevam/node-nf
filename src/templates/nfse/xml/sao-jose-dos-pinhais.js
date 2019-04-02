@@ -32,22 +32,22 @@ function createXml(object, action) {
                             });
                         }
 
-                        let xml = '<EnviarLoteRpsEnvio xmlns="http://nfe.sjp.pr.gov.br/servico_enviar_lote_rps_envio_v03.xsd">';
-                        xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + '">';
-                        xml += '<NumeroLote xmlns="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">' + timestamp + '</NumeroLote>';
-                        xml += '<Cnpj xmlns="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + '</Cnpj>';
-                        xml += '<InscricaoMunicipal xmlns="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
-                        xml += '<QuantidadeRps xmlns="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">' + object.rps.length + '</QuantidadeRps>';
-                        xml += '<ListaRps xmlns="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">';
+                        let xml = '<ns3:EnviarLoteRpsEnvio xmlns:ns3="http://nfe.sjp.pr.gov.br/servico_enviar_lote_rps_envio_v03.xsd" xmlns:ns4="http://nfe.sjp.pr.gov.br/tipos_v03.xsd">';
+                        xml += '<ns3:LoteRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + '">';
+                        xml += '<ns4:NumeroLote>' + timestamp + '</ns4:NumeroLote>';
+                        xml += '<ns4:Cnpj>' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '<ns4:QuantidadeRps>' + object.rps.length + '</ns4:QuantidadeRps>';
+                        xml += '<ns4:ListaRps>';
 
                         addSignedXml(object, cert)
                             .then(signedXmlRes => {
                                 signedXmlRes.forEach(element => {
                                     xml += element;
                                 });
-                                xml += '</ListaRps>';
-                                xml += '</LoteRps>';
-                                xml += '</EnviarLoteRpsEnvio>';
+                                xml += '</ns4:ListaRps>';
+                                xml += '</ns3:LoteRps>';
+                                xml += '</ns3:EnviarLoteRpsEnvio>';
 
                                 createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
                                     validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/sao-jose-dos-pinhais/servico_enviar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
@@ -61,22 +61,22 @@ function createXml(object, action) {
                                             resolve(validatorResult);
                                         }
 
-                                        let xml = '<soap:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://nfe.sjp.pr.gov.br">';
-                                        xml += '<soap:Header />';
+                                        let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://nfe.sjp.pr.gov.br">';
+                                        xml += '<soap:Header/>';
                                         xml += '<soap:Body>';
                                         xml += '<ns1:RecepcionarLoteRpsV3>';
                                         xml += '<arg0>';
-                                        xml += '<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
+                                        xml += '<![CDATA[<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
                                         xml += '<versaoDados>3</versaoDados>';
-                                        xml += '</cabecalho>';
+                                        xml += '</ns2:cabecalho>]]>';
                                         xml += '</arg0>';
                                         xml += '<arg1>';
-                                        xml += xmlSignature;
+                                        xml += '<![CDATA[' + xmlSignature + ']]>';
                                         xml += '</arg1>';
                                         xml += '</ns1:RecepcionarLoteRpsV3>';
                                         xml += '</soap:Body>';
                                         xml += '</soap:Envelope>';
-
+                                        console.log(xml);
                                         const result = {
                                             url: url,
                                             soapEnvelop: xml
@@ -134,12 +134,12 @@ function createXml(object, action) {
                                 xml += '<soap:Body>';
                                 xml += '<ns1:CancelarNfseEnvio xmlns:ns1="http://homologacao.ginfes.com.br">';
                                 xml += '<arg0>';
-                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
+                                xml += '<![CDATA[<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
                                 xml += '<versaoDados>3</versaoDados>';
-                                xml += '</ns2:cabecalho>';
+                                xml += '</ns2:cabecalho>]]>';
                                 xml += '</arg0>';
                                 xml += '<arg1>';
-                                xml += xmlSignature;
+                                xml += '<![CDATA[' + xmlSignature + ']]>';
                                 xml += '</arg1>';
                                 xml += '</ns1:CancelarNfseEnvio>';
                                 xml += '</soap:Body>';
@@ -201,12 +201,12 @@ function createXml(object, action) {
                                 xml += '<soap:Body>';
                                 xml += '<ns1:RecepcionarLoteRpsV3>';
                                 xml += '<arg0>';
-                                xml += '<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
+                                xml += '<![CDATA[<ns2:cabecalho xmlns:ns2="http://nfe.sjp.pr.gov.br/cabecalho_v03.xsd" versao="3">';
                                 xml += '<versaoDados>3</versaoDados>';
-                                xml += '</cabecalho>';
+                                xml += '</ns2:cabecalho>]]>';
                                 xml += '</arg0>';
                                 xml += '<arg1>';
-                                xml += xmlSignature;
+                                xml += '<![CDATA[' + xmlSignature + ']]>';
                                 xml += '</arg1>';
                                 xml += '</ns1:RecepcionarLoteRpsV3>';
                                 xml += '</soap:Body>';
@@ -228,7 +228,7 @@ function createXml(object, action) {
                     reject(error);
                 }
                 break;
-            
+
             default:
                 break;
         }
@@ -251,73 +251,75 @@ function addSignedXml(object, cert) {
                 prestadorCnpj = r.prestador.cnpj.replace(/\.|\/|\s/g, '');
                 prestadorIncricaoMunicipal = r.prestador.inscricaoMunicipal;
             }
-            xmlToBeSigned += '<Rps>';
-            xmlToBeSigned += '<InfRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + 'RPS' + index + '">';
-            xmlToBeSigned += '<IdentificacaoRps>';
-            xmlToBeSigned += '<Numero>' + timestamp + index + '</Numero>';
-            xmlToBeSigned += '<Serie>RPS</Serie>';
-            xmlToBeSigned += '<Tipo>' + r.tipo + '</Tipo>';
-            xmlToBeSigned += '</IdentificacaoRps>';
-            xmlToBeSigned += '<DataEmissao>' + r.dataEmissao + '</DataEmissao>';
-            xmlToBeSigned += '<NaturezaOperacao>' + r.naturezaOperacao + '</NaturezaOperacao>';
-            xmlToBeSigned += '<OptanteSimplesNacional>' + r.optanteSimplesNacional + '</OptanteSimplesNacional>';
-            xmlToBeSigned += '<IncentivadorCultural>' + r.incentivadorCultural + '</IncentivadorCultural>';
-            xmlToBeSigned += '<Status>' + r.status + '</Status>';
+            xmlToBeSigned += '<ns4:Rps>';
+            xmlToBeSigned += '<ns4:InfRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + 'RPS' + index + '">';
+            xmlToBeSigned += '<ns4:IdentificacaoRps>';
+            xmlToBeSigned += '<ns4:Numero>' + timestamp + index + '</ns4:Numero>';
+            xmlToBeSigned += '<ns4:Serie>RPS</ns4:Serie>';
+            xmlToBeSigned += '<ns4:Tipo>' + r.tipo + '</ns4:Tipo>';
+            xmlToBeSigned += '</ns4:IdentificacaoRps>';
+            xmlToBeSigned += '<ns4:DataEmissao>' + r.dataEmissao + '</ns4:DataEmissao>';
+            xmlToBeSigned += '<ns4:NaturezaOperacao>' + r.naturezaOperacao + '</ns4:NaturezaOperacao>';
+            xmlToBeSigned += '<ns4:OptanteSimplesNacional>' + r.optanteSimplesNacional + '</ns4:OptanteSimplesNacional>';
+            xmlToBeSigned += '<ns4:IncentivadorCultural>' + r.incentivadorCultural + '</ns4:IncentivadorCultural>';
+            xmlToBeSigned += '<ns4:Status>' + r.status + '</ns4:Status>';
 
             r.servicos.forEach(s => {
-                xmlToBeSigned += '<Servico>';
-                xmlToBeSigned += '<Valores>';
-                xmlToBeSigned += '<ValorServicos>' + s.valorServicos + '</ValorServicos>';
-                xmlToBeSigned += '<ValorDeducoes>' + s.valorDeducoes + '</ValorDeducoes>';
-                xmlToBeSigned += '<ValorPis>' + s.valorPis + '</ValorPis>';
-                xmlToBeSigned += '<ValorCofins>' + s.valorCofins + '</ValorCofins>';
-                xmlToBeSigned += '<ValorInss>' + s.valorInss + '</ValorInss>';
-                xmlToBeSigned += '<ValorIr>' + s.valorIr + '</ValorIr>';
-                xmlToBeSigned += '<ValorCsll>' + s.valorCsll + '</ValorCsll>';
-                xmlToBeSigned += '<IssRetido>' + s.issRetido + '</IssRetido>';
-                xmlToBeSigned += '<ValorIss>' + s.valorIss + '</ValorIss>';
-                xmlToBeSigned += '<BaseCalculo>' + s.baseCalculo + '</BaseCalculo>';
-                xmlToBeSigned += '<Aliquota>' + s.aliquota + '</Aliquota>';
-                xmlToBeSigned += '<ValorLiquidoNfse>' + s.valorLiquidoNfse + '</ValorLiquidoNfse>';
-                xmlToBeSigned += '</Valores>';
-                xmlToBeSigned += '<ItemListaServico>' + s.itemListaServico + '</ItemListaServico>';
-                xmlToBeSigned += '<CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
-                xmlToBeSigned += '<Discriminacao>' + s.discriminacao + '</Discriminacao>';
-                xmlToBeSigned += '<CodigoMunicipio>' + s.codigoMunicipío + '</CodigoMunicipio>';
-                xmlToBeSigned += '</Servico>';
+                xmlToBeSigned += '<ns4:Servico>';
+                xmlToBeSigned += '<ns4:Valores>';
+                xmlToBeSigned += '<ns4:ValorServicos>' + s.valorServicos + '</ns4:ValorServicos>';
+                xmlToBeSigned += '<ns4:ValorDeducoes>' + s.valorDeducoes + '</ns4:ValorDeducoes>';
+                xmlToBeSigned += '<ns4:ValorPis>' + s.valorPis + '</ns4:ValorPis>';
+                xmlToBeSigned += '<ns4:ValorCofins>' + s.valorCofins + '</ns4:ValorCofins>';
+                xmlToBeSigned += '<ns4:ValorInss>' + s.valorInss + '</ns4:ValorInss>';
+                xmlToBeSigned += '<ns4:ValorIr>' + s.valorIr + '</ns4:ValorIr>';
+                xmlToBeSigned += '<ns4:ValorCsll>' + s.valorCsll + '</ns4:ValorCsll>';
+                xmlToBeSigned += '<ns4:IssRetido>' + s.issRetido + '</ns4:IssRetido>';
+                xmlToBeSigned += '<ns4:ValorIss>' + s.valorIss + '</ns4:ValorIss>';
+                xmlToBeSigned += '<ns4:BaseCalculo>' + s.baseCalculo + '</ns4:BaseCalculo>';
+                xmlToBeSigned += '<ns4:Aliquota>' + s.aliquota + '</ns4:Aliquota>';
+                xmlToBeSigned += '<ns4:ValorLiquidoNfse>' + s.valorLiquidoNfse + '</ns4:ValorLiquidoNfse>';
+                xmlToBeSigned += '</ns4:Valores>';
+                xmlToBeSigned += '<ns4:ItemListaServico>' + s.itemListaServico + '</ns4:ItemListaServico>';
+                if (s.codigoTributacaoMunicipio) {
+                    xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
+                }
+                xmlToBeSigned += '<ns4:Discriminacao>' + s.discriminacao + '</ns4:Discriminacao>';
+                xmlToBeSigned += '<ns4:CodigoMunicipio>' + s.codigoMunicipío + '</ns4:CodigoMunicipio>';
+                xmlToBeSigned += '</ns4:Servico>';
             });
 
-            xmlToBeSigned += '<Prestador>';
-            xmlToBeSigned += '<Cnpj>' + prestadorCnpj + '</Cnpj>';
-            xmlToBeSigned += '<InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</InscricaoMunicipal>';
-            xmlToBeSigned += '</Prestador>';
-            xmlToBeSigned += '<Tomador>';
-            xmlToBeSigned += '<IdentificacaoTomador>';
-            xmlToBeSigned += '<CpfCnpj>';
+            xmlToBeSigned += '<ns4:Prestador>';
+            xmlToBeSigned += '<ns4:Cnpj>' + prestadorCnpj + '</ns4:Cnpj>';
+            xmlToBeSigned += '<ns4:InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</ns4:InscricaoMunicipal>';
+            xmlToBeSigned += '</ns4:Prestador>';
+            xmlToBeSigned += '<ns4:Tomador>';
+            xmlToBeSigned += '<ns4:IdentificacaoTomador>';
+            xmlToBeSigned += '<ns4:CpfCnpj>';
             if (r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '').length > 11) {
-                xmlToBeSigned += '<Cnpj>' + r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '') + '</Cnpj>';
+                xmlToBeSigned += '<ns4:Cnpj>' + r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '') + '</ns4:Cnpj>';
             } else {
-                xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '') + '</Cpf>';
+                xmlToBeSigned += '<ns4:Cpf>' + r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '') + '</ns4:Cpf>';
             }
-            xmlToBeSigned += '</CpfCnpj>';
-            xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
-            xmlToBeSigned += '</IdentificacaoTomador>';
-            xmlToBeSigned += '<RazaoSocial>' + r.tomador.razaoSocial + '</RazaoSocial>';
-            xmlToBeSigned += '<Endereco>';
-            xmlToBeSigned += '<Endereco>' + r.tomador.endereco.endereco + '</Endereco>';
-            xmlToBeSigned += '<Numero>' + r.tomador.endereco.numero + '</Numero>';
-            xmlToBeSigned += '<Bairro>' + r.tomador.endereco.bairro + '</Bairro>';
-            xmlToBeSigned += '<CodigoMunicipio>' + r.tomador.endereco.codigoMunicipio + '</CodigoMunicipio>';
-            xmlToBeSigned += '<Uf>' + r.tomador.endereco.uf + '</Uf>';
-            xmlToBeSigned += '<Cep>' + r.tomador.endereco.cep + '</Cep>';
-            xmlToBeSigned += '</Endereco>';
-            xmlToBeSigned += '<Contato>';
-            xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
-            xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
-            xmlToBeSigned += '</Contato>';
-            xmlToBeSigned += '</Tomador>';
-            xmlToBeSigned += '</InfRps>';
-            xmlToBeSigned += '</Rps>';
+            xmlToBeSigned += '</ns4:CpfCnpj>';
+            xmlToBeSigned += '<ns4:InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+            xmlToBeSigned += '</ns4:IdentificacaoTomador>';
+            xmlToBeSigned += '<ns4:RazaoSocial>' + r.tomador.razaoSocial + '</ns4:RazaoSocial>';
+            xmlToBeSigned += '<ns4:Endereco>';
+            xmlToBeSigned += '<ns4:Endereco>' + r.tomador.endereco.endereco + '</ns4:Endereco>';
+            xmlToBeSigned += '<ns4:Numero>' + r.tomador.endereco.numero + '</ns4:Numero>';
+            xmlToBeSigned += '<ns4:Bairro>' + r.tomador.endereco.bairro + '</ns4:Bairro>';
+            xmlToBeSigned += '<ns4:CodigoMunicipio>' + r.tomador.endereco.codigoMunicipio + '</ns4:CodigoMunicipio>';
+            xmlToBeSigned += '<ns4:Uf>' + r.tomador.endereco.uf + '</ns4:Uf>';
+            xmlToBeSigned += '<ns4:Cep>' + r.tomador.endereco.cep + '</ns4:Cep>';
+            xmlToBeSigned += '</ns4:Endereco>';
+            xmlToBeSigned += '<ns4:Contato>';
+            xmlToBeSigned += '<ns4:Telefone>' + r.tomador.contato.telefone + '</ns4:Telefone>';
+            xmlToBeSigned += '<ns4:Email>' + r.tomador.contato.email + '</ns4:Email>';
+            xmlToBeSigned += '</ns4:Contato>';
+            xmlToBeSigned += '</ns4:Tomador>';
+            xmlToBeSigned += '</ns4:InfRps>';
+            xmlToBeSigned += '</ns4:Rps>';
 
             xmlToBeSignedArray.push(xmlToBeSigned);
 

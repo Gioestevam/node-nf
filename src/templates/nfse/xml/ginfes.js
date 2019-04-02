@@ -18,6 +18,7 @@ function createXml(object, action) {
     object.config.producaoHomologacao === 'producao' ? url = 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' : url = 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl';
 
     return new Promise((resolve, reject) => {
+        console.log(action);
         switch (action) {
             case 'postLotInvoice':
                 try {
@@ -75,7 +76,7 @@ function createXml(object, action) {
                                         xml += '</ns1:RecepcionarLoteRpsV3>';
                                         xml += '</soap:Body>';
                                         xml += '</soap:Envelope>';
-
+                                        console.log(xml);
                                         const result = {
                                             url: url,
                                             soapEnvelop: xml
@@ -105,7 +106,7 @@ function createXml(object, action) {
                                 error: err
                             });
                         }
-                        console.log(object);
+
                         let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<Pedido>';
                         xml += '<ns4:InfPedidoCancelamento Id="Cancelamento_NF' + object.infPedidoCancelamento.identificacaoNfse.numero + '">';
@@ -188,14 +189,13 @@ function createXml(object, action) {
 
                         createSignature(xml, cert, 'ConsultarLoteRpsEnvio').then(xmlSignature => {
                             validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
+                                console.log(xmlSignature);
                                 if (err) {
-                                    console.log(xmlSignature);
                                     console.log(err);
                                     resolve(err);
                                 }
 
                                 if (!validatorResult.valid) {
-                                    console.log(xmlSignature);
                                     console.log(validatorResult);
                                     resolve(validatorResult);
                                 }
@@ -231,7 +231,8 @@ function createXml(object, action) {
                 }
                 break;
 
-            case 'searchNfseByRps': //Not working
+
+            case 'searchNfseByRps':
                 try {
                     const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
 
@@ -239,10 +240,11 @@ function createXml(object, action) {
                         p12Password: object.config.senhaDoCertificado
                     }, (err, cert) => {
                         if (err) {
-                            return res.send({
+                            resolve({
                                 error: err
                             });
                         }
+
                         let xml = '<ns3:ConsultarNfseRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:IdentificacaoRps>';
                         xml += '<ns4:Numero>' + object.identificacaoRps.numero + '</ns4:Numero>';
@@ -255,9 +257,9 @@ function createXml(object, action) {
                         xml += '</ns3:Prestador>';
                         xml += '</ns3:ConsultarNfseRpsEnvio>';
 
-
-                        createSignature(xml, cert, 'ConsultarNfseRpsEnvio').then(xmlSignature => {
-                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_cancelar_nfse_envio_v03.xsd', function (err, validatorResult) {
+                        createSignature(xml, cert, 'ConsultarNfseRpsEnvio', true).then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_nfse_rps_envio_v03.xsd', function (err, validatorResult) {
+                                console.log(xmlSignature);
                                 if (err) {
                                     console.log(err);
                                     resolve(err);
@@ -270,7 +272,7 @@ function createXml(object, action) {
 
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:ConsultarNfsePorRps xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:ConsultarNfsePorRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
                                 xml += '<arg0>';
                                 xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                 xml += '<versaoDados>3</versaoDados>';
@@ -279,7 +281,7 @@ function createXml(object, action) {
                                 xml += '<arg1>';
                                 xml += xmlSignature;
                                 xml += '</arg1>';
-                                xml += '</ns1:ConsultarNfsePorRps>';
+                                xml += '</ns1:ConsultarNfsePorRpsV3>';
                                 xml += '</soap:Body>';
                                 xml += '</soap:Envelope>';
 
@@ -294,7 +296,6 @@ function createXml(object, action) {
                             console.log(err);
                         });
                     });
-
                 } catch (error) {
                     reject(error);
                 }
@@ -312,7 +313,7 @@ function createXml(object, action) {
                                 error: err
                             });
                         }
-                        console.log(object.prestador);
+
                         let xml = '<ns3:ConsultarSituacaoLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_situacao_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
@@ -377,7 +378,7 @@ function createXml(object, action) {
                                 error: err
                             });
                         }
-                        console.log(object.prestador);
+
                         let xml = '<ns3:ConsultarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
@@ -475,6 +476,9 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '</ns4:IdentificacaoRps>';
             xmlToBeSigned += '<ns4:DataEmissao>' + r.dataEmissao + '</ns4:DataEmissao>';
             xmlToBeSigned += '<ns4:NaturezaOperacao>' + r.naturezaOperacao + '</ns4:NaturezaOperacao>';
+            if (r.regimeEspecialTributacao && r.regimeEspecialTributacao != '') {
+                xmlToBeSigned += '<ns4:RegimeEspecialTributacao>' + r.regimeEspecialTributacao + '</ns4:RegimeEspecialTributacao>';
+            }
             xmlToBeSigned += '<ns4:OptanteSimplesNacional>' + r.optanteSimplesNacional + '</ns4:OptanteSimplesNacional>';
             xmlToBeSigned += '<ns4:IncentivadorCultural>' + r.incentivadorCultural + '</ns4:IncentivadorCultural>';
             xmlToBeSigned += '<ns4:Status>' + r.status + '</ns4:Status>';
@@ -491,12 +495,12 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<ns4:ValorCsll>' + s.valorCsll + '</ns4:ValorCsll>';
                 xmlToBeSigned += '<ns4:IssRetido>' + s.issRetido + '</ns4:IssRetido>';
                 xmlToBeSigned += '<ns4:ValorIss>' + s.valorIss + '</ns4:ValorIss>';
-                xmlToBeSigned += '<ns4:BaseCalculo>' + s.baseCalculo + '</ns4:BaseCalculo>';
+                xmlToBeSigned += '<ns4:BaseCalculo>' + (s.valorServicos - s.valorDeducoes) + '</ns4:BaseCalculo>';
                 xmlToBeSigned += '<ns4:Aliquota>' + s.aliquota + '</ns4:Aliquota>';
                 xmlToBeSigned += '<ns4:ValorLiquidoNfse>' + s.valorLiquidoNfse + '</ns4:ValorLiquidoNfse>';
                 xmlToBeSigned += '</ns4:Valores>';
                 xmlToBeSigned += '<ns4:ItemListaServico>' + s.itemListaServico + '</ns4:ItemListaServico>';
-                if (s.codigoTributacaoMunicipio) {                    
+                if (s.codigoTributacaoMunicipio) {
                     xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
                 }
                 xmlToBeSigned += '<ns4:Discriminacao>' + s.discriminacao + '</ns4:Discriminacao>';
@@ -560,9 +564,9 @@ function addSignedXml(object, cert) {
     })
 }
 
-function createSignature(xmlToBeSigned, cert, xmlElement) {
+function createSignature(xmlToBeSigned, cert, xmlElement, isEmptyUri = null) {
     return new Promise((resolve, reject) => {
-        xmlSignatureController.addSignatureToXml(xmlToBeSigned, cert, xmlElement)
+        xmlSignatureController.addSignatureToXml(xmlToBeSigned, cert, xmlElement, null, isEmptyUri)
             .then(xmlSigned => {
                 resolve(xmlSigned);
             })

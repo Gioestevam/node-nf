@@ -155,26 +155,26 @@ const objectItu = {
 			"baseCalculo": 105.00,
 			"aliquota": 0.0200,
 			"valorLiquidoNfse": 105.00,
-			"itemListaServico": "107",
-			"codigoTributacaoMunicipio": "6209100",
+			"itemListaServico": "1009",
+			"codigoTributacaoMunicipio": "461840200",
 			"discriminacao": "Ref. Servico Conforme O.S. Foi feito ajustes nas configuracoes do SITEF.;Foi feito a instalacao do PINPAD.;Foi feito testes de venda com cartao.",
-			"codigoMunicipío": "2704302"
+			"codigoMunicipío": "3523909"
 		}],
 		"prestador": {
 			"cnpj": "17845667000198",
 			"inscricaoMunicipal": "25099"
 		},
 		"tomador": {
-			"cnpjCpf": "08485955000198",
-			"inscricaoMunicipal": "900081220",
-			"razaoSocial": "JOALHERIA DIVINO ESPIRITO SANTO LTDA ME",
+			"cnpjCpf": "70523431000118",
+			"inscricaoMunicipal": "0743140200169",
+			"razaoSocial": "ALANA E JOSEFA CONSTRUCOES LTDA",
 			"endereco": {
-				"endereco": "R AGERSON DANTAS",
-				"numero": "66",
-				"bairro": "Centro",
-				"codigoMunicipio": "2704302",
-				"uf": "AL",
-				"cep": "57020310"
+				"endereco": "Rua Manuel de Autoguia",
+				"numero": "791",
+				"bairro": "TATUAPE",
+				"codigoMunicipio": "3550308",
+				"uf": "SP",
+				"cep": "3313020"
 			},
 			"contato": {
 				"telefone": "8232211212",
@@ -453,8 +453,23 @@ const objectItuSearchSituationAndSearchRpsLot = {
 		"cnpj": "17845667000198",
 		"inscricaoMunicipal": "25099"
 	},
-	"protocolo": "9304084"
+	"protocolo": "9308476"
 }
+
+const objectMaceioSearchSituationAndSearchRpsLot = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-maceio.pfx",
+		"senhaDoCertificado": "1234",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "2704302"
+	},
+	"prestador": {
+		"cnpj": "10771824000119",
+		"inscricaoMunicipal": "900855312"
+	},
+	"protocolo": "9307647"
+}
+
 
 /**
  * ConsultarNfsePorRpsV3
@@ -486,8 +501,8 @@ const objectItuSearchNfseByRps = {
 		"codigoMunicipio": "3523909"
 	},
 	"identificacaoRps": {
-		"numero": 65,
-		"serie": "123",
+		"numero": 15541205175720,
+		"serie": "RPS",
 		"tipo": 1
 	},
 	"prestador": {
@@ -499,7 +514,7 @@ const objectItuSearchNfseByRps = {
 /**
  * ConsultarNfseV3
  */
-
+//Not wrking since there is no Nfse
 const objectRioSearchInvoice = {
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio.pfx",
@@ -570,10 +585,10 @@ const objectItuCancelInvoice = {
 	},
 	"infPedidoCancelamento" : {
 		"identificacaoNfse": {
-			"numero": 9303278,
-			"cnpj": "10771824000119",
-			"inscricaoMunicipal": "900855312",
-			"codigoMunicipio" : "2704302"
+			"numero": 583304225,
+			"cnpj": "17845667000198",
+			"inscricaoMunicipal": "25099",
+			"codigoMunicipio" : "3523909"
 		},
 		"codigoCancelamento": 0
 	}
@@ -662,13 +677,13 @@ const objectRioPostInvoice = {
 	}]
 }
 
-// nodenf.postLotInvoice('nfse', objectItu)
-// 	.then(res => {
-// 		console.log(res.body);
-// 	})
-// 	.catch(err => {
-// 		console.log(err);
-// 	})
+nodenf.postLotInvoice('nfse', objectSaoJoseDosPinhais)
+	.then(res => {
+		console.log(res.body);
+	})
+	.catch(err => {
+		console.log(err);
+	})
 
 // nodenf.searchSituation('nfse', objectItuSearchSituationAndSearchRpsLot)
 // 	.then(res => {
@@ -691,12 +706,12 @@ const objectRioPostInvoice = {
 // 		console.log(err);
 // 	})
 
-nodenf.searchInvoice('nfse', objectItuSearchInvoice)
-	.then(res => {
-		console.log(res);
-	}).catch(err => {
-		console.log(err);
-	})
+// nodenf.searchInvoice('nfse', objectItuSearchInvoice)
+// 	.then(res => {
+// 		console.log(res);
+// 	}).catch(err => {
+// 		console.log(err);
+// 	})
 
 // nodenf.cancelInvoice('nfse', objectItuCancelInvoice)
 // 	.then(res => {
