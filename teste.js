@@ -594,6 +594,20 @@ const objectItuCancelInvoice = {
 	}
 }
 
+const objectItuCancelInvoiceV2 = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
+		"senhaDoCertificado": "brmed2018",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3523909"
+	},
+	"prestador": {
+		"cnpj": "17845667000198",
+		"inscricaoMunicipal": "25099"
+	},
+	"numeroNfse": 583304225
+}
+
 const objectRioCancelInvoice = {
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio.pfx",
@@ -677,13 +691,13 @@ const objectRioPostInvoice = {
 	}]
 }
 
-nodenf.postLotInvoice('nfse', objectSaoJoseDosPinhais)
-	.then(res => {
-		console.log(res.body);
-	})
-	.catch(err => {
-		console.log(err);
-	})
+// nodenf.postLotInvoice('nfse', objectSaoJoseDosPinhais)
+// 	.then(res => {
+// 		console.log(res.body);
+// 	})
+// 	.catch(err => {
+// 		console.log(err);
+// 	})
 
 // nodenf.searchSituation('nfse', objectItuSearchSituationAndSearchRpsLot)
 // 	.then(res => {
@@ -713,12 +727,12 @@ nodenf.postLotInvoice('nfse', objectSaoJoseDosPinhais)
 // 		console.log(err);
 // 	})
 
-// nodenf.cancelInvoice('nfse', objectItuCancelInvoice)
-// 	.then(res => {
-// 		console.log(res);
-// 	}).catch(err => {
-// 		console.log(err);
-// 	})
+nodenf.cancelInvoice('nfse', objectItuCancelInvoiceV2)
+	.then(res => {
+		console.log(res);
+	}).catch(err => {
+		console.log(err);
+	})
 
 // nodenf.postInvoice('nfse', objectRioPostInvoice)
 // 	.then(res => {

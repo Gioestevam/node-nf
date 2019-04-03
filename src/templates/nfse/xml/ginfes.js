@@ -107,23 +107,17 @@ function createXml(object, action) {
                             });
                         }
 
-                        let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
-                        xml += '<Pedido>';
-                        xml += '<ns4:InfPedidoCancelamento Id="Cancelamento_NF' + object.infPedidoCancelamento.identificacaoNfse.numero + '">';
-                        xml += '<ns4:IdentificacaoNfse>';
-                        xml += '<ns4:Numero>' + object.infPedidoCancelamento.identificacaoNfse.numero + '</ns4:Numero>';
-                        xml += '<ns4:Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
-                        xml += '<ns4:CodigoMunicipio>' + object.infPedidoCancelamento.identificacaoNfse.codigoMunicipio + '</ns4:CodigoMunicipio>';
-                        xml += '</ns4:IdentificacaoNfse>';
-                        xml += '<ns4:CodigoCancelamento>' + object.infPedidoCancelamento.codigoCancelamento + '</ns4:CodigoCancelamento>';
-                        xml += '</ns4:InfPedidoCancelamento>';
-                        xml += '</Pedido>';
+                        let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos.xsd">';
+                        xml += '<ns3:Prestador>';
+                        xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
+                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        xml += '</ns3:Prestador>';
+                        xml += '<ns3:NumeroNfse>' + object.numeroNfse + '</ns3:NumeroNfse>';
                         xml += '</ns3:CancelarNfseEnvio>';
 
-                        createSignature(xml, cert, 'InfPedidoCancelamento').then(xmlSignature => {
-                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_cancelar_nfse_envio_v03.xsd', function (err, validatorResult) {
-                                if (err) {
+                        createSignature(xml, cert, 'CancelarNfseEnvio').then(xmlSignature => {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/schemas_v202/servico_cancelar_nfse_envio_v02.xsd', function (err, validatorResult) {
+                                if (err) { console.log(120);
                                     console.log(err);
                                     resolve(err);
                                 }
@@ -136,16 +130,11 @@ function createXml(object, action) {
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Header/>';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:CancelarNfseV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:CancelarNfse xmlns:ns1="http://homologacao.ginfes.com.br">';
                                 xml += '<arg0>';
-                                xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
-                                xml += '<versaoDados>3</versaoDados>';
-                                xml += '</ns2:cabecalho>';
-                                xml += '</arg0>';
-                                xml += '<arg1>';
                                 xml += xmlSignature;
-                                xml += '</arg1>';
-                                xml += '</ns1:CancelarNfseV3>';
+                                xml += '</arg0>';
+                                xml += '</ns1:CancelarNfse>';
                                 xml += '</soap:Body>';
                                 xml += '</soap:Envelope>';
 
