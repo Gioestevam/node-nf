@@ -453,7 +453,7 @@ const objectItuSearchSituationAndSearchRpsLot = {
 		"cnpj": "17845667000198",
 		"inscricaoMunicipal": "25099"
 	},
-	"protocolo": "9308476"
+	"protocolo": "9311682"
 }
 
 const objectMaceioSearchSituationAndSearchRpsLot = {
@@ -501,7 +501,7 @@ const objectItuSearchNfseByRps = {
 		"codigoMunicipio": "3523909"
 	},
 	"identificacaoRps": {
-		"numero": 15541205175720,
+		"numero": 15543793754810,
 		"serie": "RPS",
 		"tipo": 1
 	},
@@ -605,7 +605,7 @@ const objectItuCancelInvoiceV2 = {
 		"cnpj": "17845667000198",
 		"inscricaoMunicipal": "25099"
 	},
-	"numeroNfse": 583304225
+	"numeroNfse": 214
 }
 
 const objectRioCancelInvoice = {
@@ -691,7 +691,7 @@ const objectRioPostInvoice = {
 	}]
 }
 
-// nodenf.postLotInvoice('nfse', objectSaoJoseDosPinhais)
+// nodenf.postLotInvoice('nfse', objectItu)
 // 	.then(res => {
 // 		console.log(res.body);
 // 	})

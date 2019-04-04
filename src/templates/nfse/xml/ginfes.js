@@ -107,7 +107,7 @@ function createXml(object, action) {
                             });
                         }
 
-                        let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos.xsd">';
+                        let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio" xmlns:ns4="http://www.ginfes.com.br/tipos">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
                         xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
@@ -115,7 +115,7 @@ function createXml(object, action) {
                         xml += '<ns3:NumeroNfse>' + object.numeroNfse + '</ns3:NumeroNfse>';
                         xml += '</ns3:CancelarNfseEnvio>';
 
-                        createSignature(xml, cert, 'CancelarNfseEnvio').then(xmlSignature => {
+                        createSignature(xml, cert, 'CancelarNfseEnvio', true).then(xmlSignature => {
                             validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/schemas_v202/servico_cancelar_nfse_envio_v02.xsd', function (err, validatorResult) {
                                 if (err) { console.log(120);
                                     console.log(err);
@@ -137,6 +137,8 @@ function createXml(object, action) {
                                 xml += '</ns1:CancelarNfse>';
                                 xml += '</soap:Body>';
                                 xml += '</soap:Envelope>';
+
+                                console.log(xml);
 
                                 const result = {
                                     url: url,
