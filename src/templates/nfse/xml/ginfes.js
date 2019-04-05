@@ -76,7 +76,7 @@ function createXml(object, action) {
                                         xml += '</ns1:RecepcionarLoteRpsV3>';
                                         xml += '</soap:Body>';
                                         xml += '</soap:Envelope>';
-                                        console.log(xml);
+
                                         const result = {
                                             url: url,
                                             soapEnvelop: xml
@@ -117,7 +117,7 @@ function createXml(object, action) {
 
                         createSignature(xml, cert, 'CancelarNfseEnvio', true).then(xmlSignature => {
                             validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/schemas_v202/servico_cancelar_nfse_envio_v02.xsd', function (err, validatorResult) {
-                                if (err) { console.log(120);
+                                if (err) {
                                     console.log(err);
                                     resolve(err);
                                 }
@@ -137,8 +137,6 @@ function createXml(object, action) {
                                 xml += '</ns1:CancelarNfse>';
                                 xml += '</soap:Body>';
                                 xml += '</soap:Envelope>';
-
-                                console.log(xml);
 
                                 const result = {
                                     url: url,
@@ -180,7 +178,6 @@ function createXml(object, action) {
 
                         createSignature(xml, cert, 'ConsultarLoteRpsEnvio').then(xmlSignature => {
                             validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_lote_rps_envio_v03.xsd', function (err, validatorResult) {
-                                console.log(xmlSignature);
                                 if (err) {
                                     console.log(err);
                                     resolve(err);
@@ -250,7 +247,6 @@ function createXml(object, action) {
 
                         createSignature(xml, cert, 'ConsultarNfseRpsEnvio', true).then(xmlSignature => {
                             validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/servico_consultar_nfse_rps_envio_v03.xsd', function (err, validatorResult) {
-                                console.log(xmlSignature);
                                 if (err) {
                                     console.log(err);
                                     resolve(err);

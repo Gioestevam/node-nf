@@ -1,10 +1,10 @@
-const generate = require('./generate-nf')
-    , choiceTemplate = require('../templates/choice-template')
-    , request = require('request')
-    , fs = require('fs')
-    , xmlDom = require('xmldom').DOMParser;
+const generate = require('./generate-nf'),
+    choiceTemplate = require('../templates/choice-template'),
+    request = require('request'),
+    fs = require('fs'),
+    xmlDom = require('xmldom').DOMParser;
 
-function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
+function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
     return new Promise((resolve, reject) => {
         try {
             var options = {
@@ -20,7 +20,7 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
                 },
                 body: xmlEnveloped
             };
-        
+
             if (soapAction) {
                 options.headers = {
                     "Accept": "text/xml",
@@ -28,8 +28,8 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
                     "SOAPAction": soapAction,
                 }
             }
-        
-            request(options, function(error, response, body) {
+
+            request(options, function (error, response, body) {
                 if (error) {
                     return {
                         error: error
@@ -45,26 +45,92 @@ function webServiceRequest (xmlEnveloped, url, soapAction = null, certificatePat
     })
 }
 
-const postLotInvoice    = function(invoiceType, object) {
+const postLotInvoice = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.createLotInvoiceModel(invoiceType, object, 'postLotInvoice')
-        .then(postLotInvoiceResponse => {
-            webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
-            .then(webServiceResponse => {
-                resolve(webServiceResponse);
+            .then(postLotInvoiceResponse => {
+                webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    })
+                    .catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
             })
-            .catch(webServiceResponseError => {
-                reject(webServiceResponseError);
-            })
-        })
-        .catch(postLotInvoiceResponseError => {
-            console.log(postLotInvoiceResponseError);
-            return postLotInvoiceResponseError;
-        });
+            .catch(postLotInvoiceResponseError => {
+                console.log(postLotInvoiceResponseError);
+                return postLotInvoiceResponseError;
+            });
     })
 }
 
-const searchSituation   = function(invoiceType, object) {
+const postAndSearchLotInvoice = function (invoiceType, object, index) {
+    if (index === 0) {
+        let message = '';
+        (object.length > 1) ? message = `${object.length} lotes enviados`: message = '1 lote enviado';
+        console.log(message);
+    }
+
+    let newIndex = index + 1; console.log(newIndex);
+    index = newIndex;
+
+    return new Promise((resolve, reject) => {
+        choiceTemplate.createLotInvoiceModel(invoiceType, object[index], 'postLotInvoice')
+            .then(postLotInvoiceResponse => {
+                webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[index].config.diretorioDoCertificado, object[index].config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
+                            const objectToSearchRpsLot = {
+                                config: object[index].config,
+                                prestador: object[index].rps[0].prestador,
+                                "protocolo": webServiceResponse.body.split('ns3:Protocolo&gt;')[1].split('&lt;/ns3:Protocolo')[0].replace('&lt;/', '')
+                            }
+
+                            setTimeout(function () {
+                                console.log(newIndex);
+                                searchRpsLot(invoiceType, objectToSearchRpsLot)
+                                    .then(resolveSearchRpsLot => { console.log(88);
+                                        if (index < (object.length - 1)) {
+                                            postAndSearchLotInvoice('nfse', object, newIndex);
+                                        } else {
+                                            const result = {
+                                                message: `${object.length} lotes enviados`,
+                                                result: webServiceResponse
+                                            }
+                                            console.log(result.body);
+                                            resolve(result);
+                                        }
+                                    })
+                                    .catch(rejectSearchRpsLot => {
+                                        console.log(rejectSearchRpsLot);
+                                        reject(rejectSearchRpsLot);
+                                    })
+                            }, 10000);
+                        } else {
+                            const newIndex = index++;
+                            if (index < (object.length - 1)) {
+                                postAndSearchLotInvoice('nfse', object, newIndex);
+                            } else {
+                                const result = {
+                                    message: `${object.length} lotes enviados`,
+                                    result: webServiceResponse
+                                }
+                                resolve(result);
+                            }
+                        }
+                    })
+                    .catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
+            })
+            .catch(postLotInvoiceResponseError => {
+                console.log(postLotInvoiceResponseError);
+                return postLotInvoiceResponseError;
+            });
+    })
+}
+
+const searchSituation = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.searchSituacionInvoiceModel(invoiceType, object, 'searchSituation')
             .then(postSearchSituationResponse => {
@@ -79,15 +145,40 @@ const searchSituation   = function(invoiceType, object) {
                 return postSearchSituationResponseError;
             });
     })
-} 
+}
 
-const searchRpsLot      = function (invoiceType, object) {
+const searchRpsLot = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.searchRpsLotModel(invoiceType, object, 'searchRpsLot')
             .then(postSearchRpsLotResponse => {
                 webServiceRequest(postSearchRpsLotResponse.soapEnvelop, postSearchRpsLotResponse.url, postSearchRpsLotResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
                     .then(webServiceResponse => {
-                        resolve(webServiceResponse);
+                        if (invoiceType === 'nfse' && webServiceResponse.body.split('ns4:Codigo&gt;')[1]) {
+                            let mensagem = 'sem mensagem';
+                            if (webServiceResponse.body.split('ns4:Mensagem&gt;')[1]) {
+                                mensagem = webServiceResponse.body.split('ns4:Mensagem&gt;')[1].split('&lt;/ns4:Mensagem')[0].replace('&lt;/', '');
+                            }
+                            const codigo = webServiceResponse.body.split('ns4:Codigo&gt;')[1].split('&lt;/ns4:Codigo')[0].replace('&lt;/', '');
+                            
+                            if (codigo === 'E4' || codigo === 'A02' ) { 
+                                console.log(mensagem);
+                                setTimeout(() => {                                    
+                                    searchRpsLot(invoiceType, object)
+                                        .then(recursiveResponse => {
+                                            resolve(recursiveResponse)
+                                        })
+                                        .catch(recursiveError => {
+                                            reject(recursiveError);
+                                        })
+                                }, 15000);
+                            } else {
+                                console.log(mensagem);
+                                resolve(webServiceResponse);
+                            }
+                        } else { 
+                            console.log(webServiceResponse.body);
+                            resolve(webServiceResponse);
+                        }
                     }).catch(webServiceResponseError => {
                         reject(webServiceResponseError);
                     })
@@ -96,9 +187,9 @@ const searchRpsLot      = function (invoiceType, object) {
                 return postSearchRpsLotResponseError;
             });
     })
-} 
+}
 
-const searchNfseByRps   = function (invoiceType, object) {
+const searchNfseByRps = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.searchNfseByRpsModel(invoiceType, object, 'searchNfseByRps')
             .then(postSearchRpsLotResponse => {
@@ -115,7 +206,7 @@ const searchNfseByRps   = function (invoiceType, object) {
     })
 }
 
-const searchInvoice     = function(invoiceType, object) {
+const searchInvoice = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.searchInvoiceModel(invoiceType, object, 'searchInvoice')
             .then(postSearchInvoiceResponse => {
@@ -130,9 +221,9 @@ const searchInvoice     = function(invoiceType, object) {
                 return postSearchInvoiceResponseError;
             });
     })
-} 
+}
 
-const cancelInvoice     = function(invoiceType, object) {
+const cancelInvoice = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.cancelInvoiceModel(invoiceType, object, 'cancelInvoice')
             .then(postCancelInvoiceResponse => {
@@ -149,27 +240,28 @@ const cancelInvoice     = function(invoiceType, object) {
     })
 }
 
-const postInvoice       = function (invoiceType, object) {
+const postInvoice = function (invoiceType, object) {
     return new Promise((resolve, reject) => {
         choiceTemplate.createInvoiceModel(invoiceType, object, 'postInvoice')
-        .then(postInvoiceResponse => {
-            webServiceRequest(postInvoiceResponse.soapEnvelop, postInvoiceResponse.url, postInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
-            .then(webServiceResponse => {
-                resolve(webServiceResponse);
+            .then(postInvoiceResponse => {
+                webServiceRequest(postInvoiceResponse.soapEnvelop, postInvoiceResponse.url, postInvoiceResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        resolve(webServiceResponse);
+                    })
+                    .catch(webServiceResponseError => {
+                        reject(webServiceResponseError);
+                    })
             })
-            .catch(webServiceResponseError => {
-                reject(webServiceResponseError);
-            })
-        })
-        .catch(postInvoiceResponseError => {
-            console.log(postInvoiceResponseError);
-            return postInvoiceResponseError;
-        });
-    })    
+            .catch(postInvoiceResponseError => {
+                console.log(postInvoiceResponseError);
+                return postInvoiceResponseError;
+            });
+    })
 }
 
 module.exports = {
     postLotInvoice,
+    postAndSearchLotInvoice,
     postInvoice,
     searchSituation,
     searchInvoice,
