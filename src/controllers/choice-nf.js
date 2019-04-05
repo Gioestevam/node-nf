@@ -71,7 +71,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
         console.log(message);
     }
 
-    let newIndex = index + 1; console.log(newIndex);
+    let newIndex = index + 1;
     index = newIndex;
 
     return new Promise((resolve, reject) => {
