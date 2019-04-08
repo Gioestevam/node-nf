@@ -48,14 +48,14 @@ const nodenf = require('../../../src/controllers/choice-nf');
 //Exemplo GINFES
 const objectGinfes = {
 	"config": {
-		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
-		"senhaDoCertificado": "brmed2018",
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio-de-janeiro.pfx",
+		"senhaDoCertificado": "12345678",
 		"producaoHomologacao": "homologacao",
-		"codigoMunicipio": "3523909"
+		"codigoMunicipio": "3304557"
 	},
 	"emissor": {
-		"cnpj": "17845667000198",
-		"inscricaoMunicipal": "25099"
+		"cnpj": "10393366000121",
+		"inscricaoMunicipal": "04386965"
 	},
 	"rps": [{
 		"tipo": 1,
@@ -83,8 +83,8 @@ const objectGinfes = {
 			"codigoMunicipío": "3523909"
 		}],
 		"prestador": {
-			"cnpj": "17845667000198",
-			"inscricaoMunicipal": "25099"
+			"cnpj": "10393366000121",
+			"inscricaoMunicipal": "04386965"
 		},
 		"tomador": {
 			"cnpjCpf": "70523431000118",
@@ -108,13 +108,13 @@ const objectGinfes = {
 
 let objectFiveThousand = [];
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 2; i++) {
     objectFiveThousand.push(objectGinfes);
 }
 
 nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)
 	.then(res => {
-		console.log(res.result);
+		console.log(res.result.body);
 	})
 	.catch(err => {
 		console.log(err);
