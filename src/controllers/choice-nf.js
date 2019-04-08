@@ -77,6 +77,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
     return new Promise((resolve, reject) => {
         choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
             .then(postLotInvoiceResponse => {
+                console.log(postLotInvoiceResponse.soapEnvelop);
                 webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                     .then(webServiceResponse => {
                         if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {

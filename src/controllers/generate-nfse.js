@@ -1,6 +1,7 @@
 var ginfes  = require('../templates/nfse/xml/ginfes'),
     portoAlegre  = require('../templates/nfse/xml/porto-alegre'),
     rioDeJaneiro = require('../templates/nfse/xml/rio-de-janeiro'),
+    petrolina = require('../templates/nfse/xml/petrolina'),
     saoJoseDosPinhais = require('../templates/nfse/xml/sao-jose-dos-pinhais');
 
 function chooseModel (object, action) {
@@ -34,6 +35,16 @@ function chooseModel (object, action) {
                 })
                 .catch(errorRioDeJaneiro => {
                     reject(errorRioDeJaneiro);
+                });
+        }
+
+        if (codigoMunicipio === '2611101') {
+            petrolina.createXml(object, action)
+                .then(xmlFromPetrolina => {
+                    resolve(xmlFromPetrolina);
+                })
+                .catch(errorPetrolina => {
+                    reject(errorPetrolina);
                 });
         }
 

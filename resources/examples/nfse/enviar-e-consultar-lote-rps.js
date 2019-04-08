@@ -46,16 +46,16 @@ const nodenf = require('../../../src/controllers/choice-nf');
  */
 
 //Exemplo GINFES
-const objectGinfes = {
+const objectPetrolina = {
 	"config": {
-		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio-de-janeiro.pfx",
-		"senhaDoCertificado": "12345678",
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-petrolina.pfx",
+		"senhaDoCertificado": "1234",
 		"producaoHomologacao": "homologacao",
-		"codigoMunicipio": "3304557"
+		"codigoMunicipio": "2611101"
 	},
 	"emissor": {
-		"cnpj": "10393366000121",
-		"inscricaoMunicipal": "04386965"
+		"cnpj": "24444317000185",
+		"inscricaoMunicipal": "7347"
 	},
 	"rps": [{
 		"tipo": 1,
@@ -83,8 +83,8 @@ const objectGinfes = {
 			"codigoMunicipío": "3523909"
 		}],
 		"prestador": {
-			"cnpj": "10393366000121",
-			"inscricaoMunicipal": "04386965"
+			"cnpj": "24444317000185",
+			"inscricaoMunicipal": "7347"
 		},
 		"tomador": {
 			"cnpjCpf": "70523431000118",
@@ -109,7 +109,7 @@ const objectGinfes = {
 let objectFiveThousand = [];
 
 for (let i = 0; i < 2; i++) {
-    objectFiveThousand.push(objectGinfes);
+    objectFiveThousand.push(objectPetrolina);
 }
 
 nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)
