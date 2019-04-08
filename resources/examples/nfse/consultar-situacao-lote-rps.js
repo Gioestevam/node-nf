@@ -1,5 +1,4 @@
-const nodenf = require('./src/controllers/choice-nf');
-
+const nodenf = require('../../../src/controllers/choice-nf');
 
 /**
  * ConsultarLoteRpsV3
@@ -13,7 +12,7 @@ const nodenf = require('./src/controllers/choice-nf');
  */
 
  //Exemplo GINFES
-const objectGinfesSearchRpsLotSituation = {
+const objectGinfes = {
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
 		"senhaDoCertificado": "brmed2018",
@@ -28,7 +27,7 @@ const objectGinfesSearchRpsLotSituation = {
 }
 
 //Exemplo GINFES
-nodenf.searchSituation('nfse', objectGinfesSearchRpsLotSituation)
+nodenf.searchSituation('nfse', objectGinfes)
 	.then(res => {
 		console.log(res);
 	}).catch(err => {

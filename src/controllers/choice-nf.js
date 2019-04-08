@@ -75,29 +75,28 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
     index = newIndex;
 
     return new Promise((resolve, reject) => {
-        choiceTemplate.createLotInvoiceModel(invoiceType, object[index], 'postLotInvoice')
+        choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
             .then(postLotInvoiceResponse => {
-                webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[index].config.diretorioDoCertificado, object[index].config.senhaDoCertificado)
+                webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                     .then(webServiceResponse => {
                         if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
                             const objectToSearchRpsLot = {
-                                config: object[index].config,
-                                prestador: object[index].rps[0].prestador,
+                                config: object[newIndex - 1].config,
+                                prestador: object[newIndex - 1].rps[0].prestador,
                                 "protocolo": webServiceResponse.body.split('ns3:Protocolo&gt;')[1].split('&lt;/ns3:Protocolo')[0].replace('&lt;/', '')
                             }
 
                             setTimeout(function () {
-                                console.log(newIndex);
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
-                                    .then(resolveSearchRpsLot => { console.log(88);
-                                        if (index < (object.length - 1)) {
-                                            postAndSearchLotInvoice('nfse', object, newIndex);
+                                    .then(resolveSearchRpsLot => {
+                                        if ((newIndex - 1) < (object.length - 1)) {
+                                            postAndSearchLotInvoice('nfse', object, (newIndex - 1));
                                         } else {
                                             const result = {
                                                 message: `${object.length} lotes enviados`,
-                                                result: webServiceResponse
+                                                result: resolveSearchRpsLot
                                             }
-                                            console.log(result.body);
+
                                             resolve(result);
                                         }
                                     })
@@ -107,8 +106,9 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                                     })
                             }, 10000);
                         } else {
-                            const newIndex = index++;
-                            if (index < (object.length - 1)) {
+                            let newIndex = index + 1;
+                            index = newIndex;
+                            if ((newIndex - 1) < (object.length - 1)) {
                                 postAndSearchLotInvoice('nfse', object, newIndex);
                             } else {
                                 const result = {

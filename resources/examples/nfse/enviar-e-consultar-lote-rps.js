@@ -108,13 +108,13 @@ const objectGinfes = {
 
 let objectFiveThousand = [];
 
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 1; i++) {
     objectFiveThousand.push(objectGinfes);
 }
 
 nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)
-	.then(res => { console.log(116);
-		console.log(res.body);
+	.then(res => {
+		console.log(res.result);
 	})
 	.catch(err => {
 		console.log(err);
