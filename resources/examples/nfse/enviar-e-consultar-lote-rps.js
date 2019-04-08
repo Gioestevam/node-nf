@@ -46,15 +46,15 @@ const nodenf = require('../../../src/controllers/choice-nf');
  */
 
 //Exemplo GINFES
-const objectGinfes = {
+const objectSaoJoseDosPinahis = {
 	"config": {
-		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
-		"senhaDoCertificado": "brmed2018",
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-sao-jose-dos-pinhais.pfx",
+		"senhaDoCertificado": "Endpr@20!8",
 		"producaoHomologacao": "homologacao",
-		"codigoMunicipio": "3523909"
+		"codigoMunicipio": "4125506"
 	},
 	"emissor": {
-		"cnpj": "17845667000198",
+		"cnpj": "26390085000406",
 		"inscricaoMunicipal": "25099"
 	},
 	"rps": [{
@@ -109,7 +109,7 @@ const objectGinfes = {
 let objectFiveThousand = [];
 
 for (let i = 0; i < 5; i++) {
-    objectFiveThousand.push(objectGinfes);
+    objectFiveThousand.push(objectSaoJoseDosPinahis);
 }
 
 nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)

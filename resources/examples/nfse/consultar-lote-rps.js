@@ -13,12 +13,12 @@ const nodenf = require('../../../src/controllers/choice-nf');
  */
 
  //Exemplo GINFES
-const objectGinfesSearchRpsLot = {
+const objectSaoJoseDosPinhaisSearchRpsLot = {
 	"config": {
-		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
-		"senhaDoCertificado": "brmed2018",
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-sao-jose-dos-pinhais.pfx",
+		"senhaDoCertificado": "Endpr@20!8",
 		"producaoHomologacao": "homologacao",
-		"codigoMunicipio": "3523909"
+		"codigoMunicipio": "4125506"
 	},
 	"prestador": {
 		"cnpj": "17845667000198",
