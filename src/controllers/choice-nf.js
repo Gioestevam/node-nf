@@ -73,7 +73,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
 
     let newIndex = index + 1;
     index = newIndex;
-
+    console.log(newIndex);
     return new Promise((resolve, reject) => {
         choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
             .then(postLotInvoiceResponse => {
@@ -90,7 +90,33 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
                                         if ((newIndex - 1) < (object.length - 1)) {
-                                            postAndSearchLotInvoice('nfse', object, (newIndex - 1));
+                                            postAndSearchLotInvoice('nfse', object, newIndex);
+                                        } else {
+                                            const result = {
+                                                message: `${object.length} lotes enviados`,
+                                                result: resolveSearchRpsLot
+                                            }
+
+                                            resolve(result);
+                                        }
+                                    })
+                                    .catch(rejectSearchRpsLot => {
+                                        console.log(rejectSearchRpsLot);
+                                        reject(rejectSearchRpsLot);
+                                    })
+                            }, 10000);
+                        } else if (webServiceResponse.body.split('Protocolo&gt;')[1]) {
+                            const objectToSearchRpsLot = {
+                                config: object[newIndex - 1].config,
+                                prestador: object[newIndex - 1].rps[0].prestador,
+                                "protocolo": webServiceResponse.body.split('Protocolo&gt;')[1].split('&lt;/Protocolo')[0].replace('&lt;/', '')
+                            }
+
+                            setTimeout(function () {
+                                searchRpsLot(invoiceType, objectToSearchRpsLot)
+                                    .then(resolveSearchRpsLot => {
+                                        if ((newIndex - 1) < (object.length - 1)) {
+                                            postAndSearchLotInvoice('nfse', object, newIndex);
                                         } else {
                                             const result = {
                                                 message: `${object.length} lotes enviados`,
@@ -159,10 +185,10 @@ const searchRpsLot = function (invoiceType, object) {
                                 mensagem = webServiceResponse.body.split('ns4:Mensagem&gt;')[1].split('&lt;/ns4:Mensagem')[0].replace('&lt;/', '');
                             }
                             const codigo = webServiceResponse.body.split('ns4:Codigo&gt;')[1].split('&lt;/ns4:Codigo')[0].replace('&lt;/', '');
-                            
-                            if (codigo === 'E4' || codigo === 'A02' ) { 
+
+                            if (codigo === 'E4' || codigo === 'A02') {
                                 console.log(mensagem);
-                                setTimeout(() => {                                    
+                                setTimeout(() => {
                                     searchRpsLot(invoiceType, object)
                                         .then(recursiveResponse => {
                                             resolve(recursiveResponse)
@@ -175,7 +201,29 @@ const searchRpsLot = function (invoiceType, object) {
                                 console.log(mensagem);
                                 resolve(webServiceResponse);
                             }
-                        } else { 
+                        } else if (invoiceType === 'nfse' && webServiceResponse.body.split('Codigo&gt;')[1]) {
+                            let mensagem = 'sem mensagem';
+                            if (webServiceResponse.body.split('Mensagem&gt;')[1]) {
+                                mensagem = webServiceResponse.body.split('Mensagem&gt;')[1].split('&lt;/Mensagem')[0].replace('&lt;/', '');
+                            }
+                            const codigo = webServiceResponse.body.split('Codigo&gt;')[1].split('&lt;/Codigo')[0].replace('&lt;/', '');
+
+                            if (codigo === 'E4' || codigo === 'A02') {
+                                console.log(mensagem);
+                                setTimeout(() => {
+                                    searchRpsLot(invoiceType, object)
+                                        .then(recursiveResponse => {
+                                            resolve(recursiveResponse)
+                                        })
+                                        .catch(recursiveError => {
+                                            reject(recursiveError);
+                                        })
+                                }, 15000);
+                            } else {
+                                console.log(mensagem);
+                                resolve(webServiceResponse);
+                            }
+                        } else {
                             console.log(webServiceResponse.body);
                             resolve(webServiceResponse);
                         }
