@@ -76,7 +76,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
     index = newIndex;
     console.log(newIndex);
     
-    return new Promise((resolve, reject) => {
+    return new Promise((resolvePostAndSearchLotInvoice, rejectPostAndSearchLotInvoice) => {
         choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
             .then(postLotInvoiceResponse => {
                 webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
@@ -91,20 +91,17 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                             setTimeout(function () {
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
-                                        console.log((newIndex - 1), (object.length - 1));
-                                        if ((newIndex - 1) < (object.length - 1)) { console.log(resolveSearchRpsLot.body);
+                                        if ((newIndex - 1) < (object.length - 1)) {
                                             resultArray.push(resolveSearchRpsLot.body);
-
                                             postAndSearchLotInvoice('nfse', object, newIndex);
-                                        } else { console.log(98);
+                                        } else {
                                             resultArray.push(resolveSearchRpsLot.body);
-                                            
                                             const result = {
                                                 message: `${object.length} lotes enviados`,
                                                 result: resultArray
                                             }
 
-                                            resolve(result);
+                                            resolvePostAndSearchLotInvoice(result);
                                         }
                                     })
                                     .catch(rejectSearchRpsLot => {
@@ -130,12 +127,12 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                                                 result: resolveSearchRpsLot
                                             }
 
-                                            resolve(result);
+                                            resolvePostAndSearchLotInvoice(result);
                                         }
                                     })
                                     .catch(rejectSearchRpsLot => {
                                         console.log(rejectSearchRpsLot);
-                                        reject(rejectSearchRpsLot);
+                                        rejectPostAndSearchLotInvoice(rejectSearchRpsLot);
                                     })
                             }, 10000);
                         } else {
@@ -148,17 +145,17 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                                     message: `${object.length} lotes enviados`,
                                     result: webServiceResponse
                                 }
-                                resolve(result);
+                                resolvePostAndSearchLotInvoice(result);
                             }
                         }
                     })
                     .catch(webServiceResponseError => {
-                        reject(webServiceResponseError);
+                        rejectPostAndSearchLotInvoice(webServiceResponseError);
                     })
             })
             .catch(postLotInvoiceResponseError => {
                 console.log(postLotInvoiceResponseError);
-                return postLotInvoiceResponseError;
+                resolvePostAndSearchLotInvoice(postLotInvoiceResponseError);
             });
     })
 }
@@ -186,7 +183,6 @@ const searchRpsLot = function (invoiceType, object) {
             .then(postSearchRpsLotResponse => {
                 webServiceRequest(postSearchRpsLotResponse.soapEnvelop, postSearchRpsLotResponse.url, postSearchRpsLotResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
                     .then(webServiceResponse => {
-                        console.log(postSearchRpsLotResponse.soapEnvelop);
                         if (invoiceType === 'nfse' && webServiceResponse.body.split('ns4:Codigo&gt;')[1]) {
                             let mensagem = 'sem mensagem';
                             if (webServiceResponse.body.split('ns4:Mensagem&gt;')[1]) {
@@ -195,6 +191,7 @@ const searchRpsLot = function (invoiceType, object) {
                             const codigo = webServiceResponse.body.split('ns4:Codigo&gt;')[1].split('&lt;/ns4:Codigo')[0].replace('&lt;/', '');
 
                             if (codigo === 'E4' || codigo === 'A02') {
+                                console.log(mensagem);
                                 setTimeout(() => {
                                     searchRpsLot(invoiceType, object)
                                         .then(recursiveResponse => {
@@ -231,7 +228,6 @@ const searchRpsLot = function (invoiceType, object) {
                                 resolve(webServiceResponse);
                             }
                         } else {
-                            console.log(webServiceResponse.body);
                             resolve(webServiceResponse);
                         }
                     }).catch(webServiceResponseError => {
