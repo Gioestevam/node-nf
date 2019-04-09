@@ -74,7 +74,6 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
 
     let newIndex = index + 1;
     index = newIndex;
-    console.log(newIndex);
     
     return new Promise((resolvePostAndSearchLotInvoice, rejectPostAndSearchLotInvoice) => {
         choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
@@ -207,13 +206,15 @@ const searchRpsLot = function (invoiceType, object) {
                             }
                         } else if (invoiceType === 'nfse' && webServiceResponse.body.split('Codigo&gt;')[1]) {
                             let mensagem = 'sem mensagem';
-                            if (webServiceResponse.body.split('Mensagem&gt;')[1]) {
-                                mensagem = webServiceResponse.body.split('Mensagem&gt;')[1].split('&lt;/Mensagem')[0].replace('&lt;/', '');
+                            const responseBody = webServiceResponse.body;
+                            if (responseBody.split('Mensagem&gt;')[1]) {
+                                mensagem = responseBody.split('Mensagem&gt;')[1].split('&lt;/Mensagem')[0].replace('&lt;/', '');
                             }
-                            const codigo = webServiceResponse.body.split('Codigo&gt;')[1].split('&lt;/Codigo')[0].replace('&lt;/', '');
-
+                            const codigo = responseBody.split('Codigo&gt;')[1].split('&lt;/Codigo')[0].replace('&lt;/', '');
+                            
                             if (codigo === 'E4' || codigo === 'A02') {
                                 console.log(mensagem);
+                                
                                 setTimeout(() => {
                                     searchRpsLot(invoiceType, object)
                                         .then(recursiveResponse => {
@@ -225,10 +226,11 @@ const searchRpsLot = function (invoiceType, object) {
                                 }, 15000);
                             } else {
                                 console.log(mensagem);
-                                resolve(webServiceResponse);
+                                
+                                resolve(responseBody);
                             }
                         } else {
-                            resolve(webServiceResponse);
+                            resolve(responseBody);
                         }
                     }).catch(webServiceResponseError => {
                         reject(webServiceResponseError);
