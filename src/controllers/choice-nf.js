@@ -6,51 +6,6 @@ const generate = require('./generate-nf'),
 let resultArrayPostLotInvoice = [];
 let resultArraySearchRpsLot = [];
 
-function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
-    try {
-        return new Promise((resolve, reject) => {
-            try {
-                var options = {
-                    method: 'POST',
-                    url: url,
-                    agentOptions: {
-                        pfx: fs.readFileSync(certificatePath),
-                        passphrase: certificatePassword,
-                    },
-                    headers: {
-                        "Accept": "text/xml",
-                        "Content-Type": "text/xml;charset=UTF-8"
-                    },
-                    body: xmlEnveloped
-                };
-    
-                if (soapAction) {
-                    options.headers = {
-                        "Accept": "text/xml",
-                        "Content-Type": "text/xml;charset=UTF-8",
-                        "SOAPAction": soapAction,
-                    }
-                }
-                
-                request(options, function (error, response, body) {
-                    if (error) {
-                        const result = { error: error };
-                        console.log(result);
-                        return result;
-                    }
-                    
-                    resolve(response);
-                });
-            } catch (error) {
-                console.log(error);
-                reject(error);
-            }
-        })        
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 const postLotInvoice = function (invoiceType, object, index) {
     if (index === 0) {
         let message = '';
@@ -66,10 +21,10 @@ const postLotInvoice = function (invoiceType, object, index) {
             webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                 .then(webServiceResponse => {
                     if ((newIndex - 1) < (object.length - 1)) {
-                        resultArrayPostLotInvoice.push(webServiceResponse);
+                        resultArrayPostLotInvoice.push(webServiceResponse.body);
                         postLotInvoice('nfse', object, newIndex);
                     } else {
-                        resultArrayPostLotInvoice.push(webServiceResponse);
+                        resultArrayPostLotInvoice.push(webServiceResponse.body);
                         const result = {
                             message: `${object.length} lotes enviados`,
                             result: resultArrayPostLotInvoice
@@ -320,6 +275,51 @@ const postInvoice = function (invoiceType, object) {
                 return postInvoiceResponseError;
             });
     })
+}
+
+function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
+    try {
+        return new Promise((resolve, reject) => {
+            try {
+                var options = {
+                    method: 'POST',
+                    url: url,
+                    agentOptions: {
+                        pfx: fs.readFileSync(certificatePath),
+                        passphrase: certificatePassword,
+                    },
+                    headers: {
+                        "Accept": "text/xml",
+                        "Content-Type": "text/xml;charset=UTF-8"
+                    },
+                    body: xmlEnveloped
+                };
+    
+                if (soapAction) {
+                    options.headers = {
+                        "Accept": "text/xml",
+                        "Content-Type": "text/xml;charset=UTF-8",
+                        "SOAPAction": soapAction,
+                    }
+                }
+                
+                request(options, function (error, response, body) {
+                    if (error) {
+                        const result = { error: error };
+                        console.log(result);
+                        return result;
+                    }
+                    
+                    resolve(response);
+                });
+            } catch (error) {
+                console.log(error);
+                reject(error);
+            }
+        })        
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 module.exports = {

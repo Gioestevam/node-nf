@@ -26,8 +26,22 @@ const objectGinfes = {
 	"protocolo": "9311682"
 }
 
+const objectRio = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio-de-janeiro.pfx",
+		"senhaDoCertificado": "12345678",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3304557"
+	},
+	"prestador": {
+		"cnpj": "10393366000121",
+		"inscricaoMunicipal": "04386965"
+	},
+	"protocolo": "00000000000000000000000000000000000000000002293421"
+}
+
 //Exemplo GINFES
-nodenf.searchSituation('nfse', objectGinfes)
+nodenf.searchSituation('nfse', objectRio)
 	.then(res => {
 		console.log(res);
 	}).catch(err => {

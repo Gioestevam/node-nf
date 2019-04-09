@@ -112,4 +112,8 @@ for (let i = 0; i < 2; i++) {
     objectFiveThousand.push(objectRio);
 }
 
-nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0);
+const enviarEConsultarLote = async function () {
+	await nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0);
+}
+
+enviarEConsultarLote();
