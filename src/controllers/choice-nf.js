@@ -16,7 +16,8 @@ const postLotInvoice = function (invoiceType, object, index) {
     let newIndex = index + 1;
     index = newIndex;
 
-    choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
+    return new Promise((resolvePostLot, rejectPostLot) => {
+        choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
         .then(postLotInvoiceResponse => {
             webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                 .then(webServiceResponse => {
@@ -31,18 +32,19 @@ const postLotInvoice = function (invoiceType, object, index) {
                         }
                         
                         console.log(result);
-                        return result;
+                        resolvePostLot(result);
                     }
                 })
                 .catch(webServiceResponseError => {
                     console.log(webServiceResponseError);
-                    return webServiceResponseError;
+                    rejectPostLot(webServiceResponseError);
                 })
         })
         .catch(postLotInvoiceResponseError => {
             console.log(postLotInvoiceResponseError);
-            return postLotInvoiceResponseError;
+            rejectPostLot(postLotInvoiceResponseError);
         });
+    })
 }
 
 const postAndSearchLotInvoice = function (invoiceType, object, index) {
@@ -115,7 +117,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                         }
                     })
                     .catch(webServiceResponseError => {
-                        return webServiceResponseError;
+                        rejectPostAndSearch(webServiceResponseError);
                     })
             })
             .catch(postLotInvoiceResponseError => {
@@ -137,7 +139,7 @@ const searchSituation = function (invoiceType, object) {
                     })
             }).catch(postSearchSituationResponseError => {
                 console.log(postSearchSituationResponseError);
-                return postSearchSituationResponseError;
+                resolve(postSearchSituationResponseError);
             });
     })
 }
@@ -203,7 +205,7 @@ const searchRpsLot = function (invoiceType, object) {
                     })
             }).catch(postSearchRpsLotResponseError => {
                 console.log(postSearchRpsLotResponseError);
-                return postSearchRpsLotResponseError;
+                reject(postSearchRpsLotResponseError);
             });
     })
 }
@@ -220,7 +222,7 @@ const searchNfseByRps = function (invoiceType, object) {
                     })
             }).catch(postSearchRpsLotResponseError => {
                 console.log(postSearchRpsLotResponseError);
-                return postSearchRpsLotResponseError;
+                reject(postSearchRpsLotResponseError);
             });
     })
 }
@@ -237,7 +239,7 @@ const searchInvoice = function (invoiceType, object) {
                     })
             }).catch(postSearchInvoiceResponseError => {
                 console.log(postSearchInvoiceResponseError);
-                return postSearchInvoiceResponseError;
+                reject(postSearchInvoiceResponseError);
             });
     })
 }
@@ -254,7 +256,7 @@ const cancelInvoice = function (invoiceType, object) {
                     })
             }).catch(postCancelInvoiceResponseError => {
                 console.log(postCancelInvoiceResponseError);
-                return postCancelInvoiceResponseError;
+                reject(postCancelInvoiceResponseError);
             });
     })
 }
@@ -273,7 +275,7 @@ const postInvoice = function (invoiceType, object) {
             })
             .catch(postInvoiceResponseError => {
                 console.log(postInvoiceResponseError);
-                return postInvoiceResponseError;
+                reject(postInvoiceResponseError);
             });
     })
 }
@@ -306,9 +308,12 @@ function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath
                 
                 request(options, function (error, response, body) {
                     if (error) {
-                        const result = { error: error };
+                        const result = {
+                            message: 'Verifique se o webservice está online',
+                            error: error 
+                        };
                         console.log(result);
-                        return result;
+                        reject(result);
                     }
                     
                     resolve(response);

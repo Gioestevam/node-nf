@@ -13,7 +13,7 @@ const nodenf = require('../../../src/controllers/choice-nf');
  * @param {string} prestador.inscricaoMunicipal - Inscrição municipal da empresa prestadora do serviço (geralmente é a emissora - mas não necessariamente)
  */
 
-const objectGinfesSearchNfseByRps = {
+const objectGinfes = {
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
 		"senhaDoCertificado": "brmed2018",
@@ -30,3 +30,10 @@ const objectGinfesSearchNfseByRps = {
 		"inscricaoMunicipal": "25099"
 	}
 }
+
+nodenf.searchNfseByRps('nfse', objectGinfes)
+	.then(res => {
+		console.log(res);
+	}).catch(err => {
+		console.log(err);
+	})

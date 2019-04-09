@@ -1,6 +1,6 @@
 {
   "name": "nota-fiscal",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Gerador de NF-e, NFS-e, NFC-e e etc. OPEN SOURCE",
   "main": "index.js",
   "scripts": {
