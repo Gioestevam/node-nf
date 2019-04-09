@@ -55,73 +55,74 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
     let newIndex = index + 1;
     index = newIndex;
 
-
-    choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
-        .then(postLotInvoiceResponse => {
-            webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
-                .then(webServiceResponse => {
-                    let objectToSearchRpsLot = {};
-                    resultArrayPostLotInvoice.push(webServiceResponse.body);
-                    if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
-                        objectToSearchRpsLot = {
-                            config: object[newIndex - 1].config,
-                            prestador: object[newIndex - 1].rps[0].prestador,
-                            "protocolo": webServiceResponse.body.split('ns3:Protocolo&gt;')[1].split('&lt;/ns3:Protocolo')[0].replace('&lt;/', '')
-                        }
-                    } else if (webServiceResponse.body.split('Protocolo&gt;')[1]) {
-                        objectToSearchRpsLot = {
-                            config: object[newIndex - 1].config,
-                            prestador: object[newIndex - 1].rps[0].prestador,
-                            "protocolo": webServiceResponse.body.split('Protocolo&gt;')[1].split('&lt;/Protocolo')[0].replace('&lt;/', '')
-                        }
-                    } else {
-                        let newIndex = index + 1;
-                        index = newIndex;
-                        if ((newIndex - 1) < (object.length - 1)) {
-                            postAndSearchLotInvoice('nfse', object, newIndex);
-                        } else {
-                            const result = {
-                                message: `${object.length} lotes enviados`,
-                                result: webServiceResponse
+    return new Promise((resolvePostAndSearch, rejectPostAndSearch) => {
+        choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
+            .then(postLotInvoiceResponse => {
+                webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
+                    .then(webServiceResponse => {
+                        let objectToSearchRpsLot = {};
+                        resultArrayPostLotInvoice.push(webServiceResponse.body);
+                        if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
+                            objectToSearchRpsLot = {
+                                config: object[newIndex - 1].config,
+                                prestador: object[newIndex - 1].rps[0].prestador,
+                                "protocolo": webServiceResponse.body.split('ns3:Protocolo&gt;')[1].split('&lt;/ns3:Protocolo')[0].replace('&lt;/', '')
                             }
-                            console.log(result);
-                            return result;
+                        } else if (webServiceResponse.body.split('Protocolo&gt;')[1]) {
+                            objectToSearchRpsLot = {
+                                config: object[newIndex - 1].config,
+                                prestador: object[newIndex - 1].rps[0].prestador,
+                                "protocolo": webServiceResponse.body.split('Protocolo&gt;')[1].split('&lt;/Protocolo')[0].replace('&lt;/', '')
+                            }
+                        } else {
+                            let newIndex = index + 1;
+                            index = newIndex;
+                            if ((newIndex - 1) < (object.length - 1)) {
+                                postAndSearchLotInvoice('nfse', object, newIndex);
+                            } else {
+                                const result = {
+                                    message: `${object.length} lotes enviados`,
+                                    result: webServiceResponse
+                                }
+                                console.log(result);
+                                resolvePostAndSearch(result);
+                            }
                         }
-                    }
-
-                    if (objectToSearchRpsLot.config) {
-                        setTimeout(function () {
-                            searchRpsLot(invoiceType, objectToSearchRpsLot)
-                                .then(resolveSearchRpsLot => {
-                                    if ((newIndex - 1) < (object.length - 1)) {
-                                        resultArraySearchRpsLot.push(resolveSearchRpsLot);
-                                        postAndSearchLotInvoice('nfse', object, newIndex);
-                                    } else {
-                                        resultArraySearchRpsLot.push(resolveSearchRpsLot);
-                                        const result = {
-                                            message: `${object.length} lotes enviados`,
-                                            resultSearchRpsLot: resultArraySearchRpsLot,
-                                            resultPostLotInvoice: resultArrayPostLotInvoice
+    
+                        if (objectToSearchRpsLot.config) {
+                            setTimeout(function () {
+                                searchRpsLot(invoiceType, objectToSearchRpsLot)
+                                    .then(resolveSearchRpsLot => {
+                                        if ((newIndex - 1) < (object.length - 1)) {
+                                            resultArraySearchRpsLot.push(resolveSearchRpsLot);
+                                            postAndSearchLotInvoice('nfse', object, newIndex);
+                                        } else {
+                                            resultArraySearchRpsLot.push(resolveSearchRpsLot);
+                                            const result = {
+                                                message: `${object.length} lotes enviados`,
+                                                resultSearchRpsLot: resultArraySearchRpsLot,
+                                                resultPostLotInvoice: resultArrayPostLotInvoice
+                                            }
+                                            console.log(result);
+                                            resolvePostAndSearch(result);
                                         }
-                                        console.log(result);
-                                        return result;
-                                    }
-                                })
-                                .catch(rejectSearchRpsLot => {
-                                    console.log(rejectSearchRpsLot);
-                                    reject(rejectSearchRpsLot);
-                                })
-                        }, 10000);
-                    }
-                })
-                .catch(webServiceResponseError => {
-                    return webServiceResponseError;
-                })
-        })
-        .catch(postLotInvoiceResponseError => {
-            console.log(postLotInvoiceResponseError);
-            return postLotInvoiceResponseError;
-        });
+                                    })
+                                    .catch(rejectSearchRpsLot => {
+                                        console.log(rejectSearchRpsLot);
+                                        reject(rejectSearchRpsLot);
+                                    })
+                            }, 10000);
+                        }
+                    })
+                    .catch(webServiceResponseError => {
+                        return webServiceResponseError;
+                    })
+            })
+            .catch(postLotInvoiceResponseError => {
+                console.log(postLotInvoiceResponseError);
+                rejectPostAndSearch(postLotInvoiceResponseError);
+            });
+    })
 }
 
 const searchSituation = function (invoiceType, object) {

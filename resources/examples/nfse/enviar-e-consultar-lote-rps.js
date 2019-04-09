@@ -112,8 +112,10 @@ for (let i = 0; i < 2; i++) {
     objectFiveThousand.push(objectRio);
 }
 
-const enviarEConsultarLote = async function () {
-	await nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0);
-}
-
-enviarEConsultarLote();
+nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)
+	.then(res => {
+		console.log(res);
+	})
+	.catch(err => {
+		console.log(err);
+	});
