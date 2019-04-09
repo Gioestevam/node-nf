@@ -113,8 +113,8 @@ for (let i = 0; i < 1; i++) {
 }
 
 nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)
-	.then(res => {
-		console.log(res.result);
+	.then(res => { console.log(116);
+		console.log(res);
 	})
 	.catch(err => {
 		console.log(err);
