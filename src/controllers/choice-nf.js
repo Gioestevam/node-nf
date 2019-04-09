@@ -1,8 +1,9 @@
 const generate = require('./generate-nf'),
     choiceTemplate = require('../templates/choice-template'),
     request = require('request'),
-    fs = require('fs'),
-    xmlDom = require('xmldom').DOMParser;
+    fs = require('fs');
+
+let resultArray = [];
 
 function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
     return new Promise((resolve, reject) => {
@@ -74,6 +75,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
     let newIndex = index + 1;
     index = newIndex;
     console.log(newIndex);
+    
     return new Promise((resolve, reject) => {
         choiceTemplate.createLotInvoiceModel(invoiceType, object[newIndex - 1], 'postLotInvoice')
             .then(postLotInvoiceResponse => {
@@ -89,12 +91,17 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                             setTimeout(function () {
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
-                                        if ((newIndex - 1) < (object.length - 1)) {
+                                        console.log((newIndex - 1), (object.length - 1));
+                                        if ((newIndex - 1) < (object.length - 1)) { console.log(resolveSearchRpsLot.body);
+                                            resultArray.push(resolveSearchRpsLot.body);
+
                                             postAndSearchLotInvoice('nfse', object, newIndex);
-                                        } else {
+                                        } else { console.log(98);
+                                            resultArray.push(resolveSearchRpsLot.body);
+                                            
                                             const result = {
                                                 message: `${object.length} lotes enviados`,
-                                                result: resolveSearchRpsLot
+                                                result: resultArray
                                             }
 
                                             resolve(result);
@@ -179,6 +186,7 @@ const searchRpsLot = function (invoiceType, object) {
             .then(postSearchRpsLotResponse => {
                 webServiceRequest(postSearchRpsLotResponse.soapEnvelop, postSearchRpsLotResponse.url, postSearchRpsLotResponse.soapAction, object.config.diretorioDoCertificado, object.config.senhaDoCertificado)
                     .then(webServiceResponse => {
+                        console.log(postSearchRpsLotResponse.soapEnvelop);
                         if (invoiceType === 'nfse' && webServiceResponse.body.split('ns4:Codigo&gt;')[1]) {
                             let mensagem = 'sem mensagem';
                             if (webServiceResponse.body.split('ns4:Mensagem&gt;')[1]) {
@@ -187,7 +195,6 @@ const searchRpsLot = function (invoiceType, object) {
                             const codigo = webServiceResponse.body.split('ns4:Codigo&gt;')[1].split('&lt;/ns4:Codigo')[0].replace('&lt;/', '');
 
                             if (codigo === 'E4' || codigo === 'A02') {
-                                console.log(mensagem);
                                 setTimeout(() => {
                                     searchRpsLot(invoiceType, object)
                                         .then(recursiveResponse => {
