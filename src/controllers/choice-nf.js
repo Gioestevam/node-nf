@@ -3,7 +3,8 @@ const generate = require('./generate-nf'),
     request = require('request'),
     fs = require('fs');
 
-let resultArray = [];
+let resultArrayPostLotInvoice = [];
+let resultArraySearchRpsLot = [];
 
 function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath, certificatePassword) {
     try {
@@ -65,13 +66,13 @@ const postLotInvoice = function (invoiceType, object, index) {
             webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                 .then(webServiceResponse => {
                     if ((newIndex - 1) < (object.length - 1)) {
-                        resultArray.push(webServiceResponse);
+                        resultArrayPostLotInvoice.push(webServiceResponse);
                         postLotInvoice('nfse', object, newIndex);
                     } else {
-                        resultArray.push(webServiceResponse);
+                        resultArrayPostLotInvoice.push(webServiceResponse);
                         const result = {
                             message: `${object.length} lotes enviados`,
-                            result: resultArray
+                            result: resultArrayPostLotInvoice
                         }
                         
                         console.log(result);
@@ -104,62 +105,20 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
         .then(postLotInvoiceResponse => {
             webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                 .then(webServiceResponse => {
+                    let objectToSearchRpsLot = {};
+                    resultArrayPostLotInvoice.push(webServiceResponse.body);
                     if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
-                        const objectToSearchRpsLot = {
+                        objectToSearchRpsLot = {
                             config: object[newIndex - 1].config,
                             prestador: object[newIndex - 1].rps[0].prestador,
                             "protocolo": webServiceResponse.body.split('ns3:Protocolo&gt;')[1].split('&lt;/ns3:Protocolo')[0].replace('&lt;/', '')
                         }
-
-                        setTimeout(function () {
-                            searchRpsLot(invoiceType, objectToSearchRpsLot)
-                                .then(resolveSearchRpsLot => {
-                                    if ((newIndex - 1) < (object.length - 1)) {
-                                        resultArray.push(resolveSearchRpsLot);
-                                        postAndSearchLotInvoice('nfse', object, newIndex);
-                                    } else {
-                                        resultArray.push(resolveSearchRpsLot);
-                                        const result = {
-                                            message: `${object.length} lotes enviados`,
-                                            result: resultArray
-                                        }
-                                        console.log(result);
-                                        return result;
-                                    }
-                                })
-                                .catch(rejectSearchRpsLot => {
-                                    console.log(rejectSearchRpsLot);
-                                    reject(rejectSearchRpsLot);
-                                })
-                        }, 10000);
                     } else if (webServiceResponse.body.split('Protocolo&gt;')[1]) {
-                        const objectToSearchRpsLot = {
+                        objectToSearchRpsLot = {
                             config: object[newIndex - 1].config,
                             prestador: object[newIndex - 1].rps[0].prestador,
                             "protocolo": webServiceResponse.body.split('Protocolo&gt;')[1].split('&lt;/Protocolo')[0].replace('&lt;/', '')
                         }
-
-                        setTimeout(function () {
-                            searchRpsLot(invoiceType, objectToSearchRpsLot)
-                                .then(resolveSearchRpsLot => {
-                                    if ((newIndex - 1) < (object.length - 1)) {
-                                        resultArray.push(resolveSearchRpsLot);
-                                        postAndSearchLotInvoice('nfse', object, newIndex);
-                                    } else {
-                                        resultArray.push(resolveSearchRpsLot);
-                                        const result = {
-                                            message: `${object.length} lotes enviados`,
-                                            result: resultArray
-                                        }
-                                        console.log(result);
-                                        return result;
-                                    }
-                                })
-                                .catch(rejectSearchRpsLot => {
-                                    console.log(rejectSearchRpsLot.body);
-                                    return rejectSearchRpsLot;
-                                })
-                        }, 10000);
                     } else {
                         let newIndex = index + 1;
                         index = newIndex;
@@ -173,6 +132,31 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                             console.log(result);
                             return result;
                         }
+                    }
+
+                    if (objectToSearchRpsLot.config) {
+                        setTimeout(function () {
+                            searchRpsLot(invoiceType, objectToSearchRpsLot)
+                                .then(resolveSearchRpsLot => {
+                                    if ((newIndex - 1) < (object.length - 1)) {
+                                        resultArraySearchRpsLot.push(resolveSearchRpsLot);
+                                        postAndSearchLotInvoice('nfse', object, newIndex);
+                                    } else {
+                                        resultArraySearchRpsLot.push(resolveSearchRpsLot);
+                                        const result = {
+                                            message: `${object.length} lotes enviados`,
+                                            resultSearchRpsLot: resultArraySearchRpsLot,
+                                            resultPostLotInvoice: resultArrayPostLotInvoice
+                                        }
+                                        console.log(result);
+                                        return result;
+                                    }
+                                })
+                                .catch(rejectSearchRpsLot => {
+                                    console.log(rejectSearchRpsLot);
+                                    reject(rejectSearchRpsLot);
+                                })
+                        }, 10000);
                     }
                 })
                 .catch(webServiceResponseError => {
