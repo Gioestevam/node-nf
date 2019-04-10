@@ -80,7 +80,7 @@ const objectRio = {
 			"itemListaServico": "1009",
 			"codigoTributacaoMunicipio": "461840200",
 			"discriminacao": "Ref. Servico Conforme O.S. Foi feito ajustes nas configuracoes do SITEF.;Foi feito a instalacao do PINPAD.;Foi feito testes de venda com cartao.",
-			"codigoMunicipío": "3523909"
+			"codigoMunicipio": "3523909"
 		}],
 		"prestador": {
 			"cnpj": "10393366000121",

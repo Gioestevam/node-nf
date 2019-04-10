@@ -159,7 +159,7 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<ItemListaServico>' + s.itemListaServico + '</ItemListaServico>';
                 xmlToBeSigned += '<CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
                 xmlToBeSigned += '<Discriminacao>' + s.discriminacao + '</Discriminacao>';
-                xmlToBeSigned += '<CodigoMunicipio>' + s.codigoMunicipío + '</CodigoMunicipio>';
+                xmlToBeSigned += '<CodigoMunicipio>' + s.codigoMunicipio + '</CodigoMunicipio>';
                 xmlToBeSigned += '</Servico>';
             });
 

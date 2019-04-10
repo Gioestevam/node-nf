@@ -285,7 +285,7 @@ function addSignedXml(object, cert) {
                     xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
                 }
                 xmlToBeSigned += '<ns4:Discriminacao>' + s.discriminacao + '</ns4:Discriminacao>';
-                xmlToBeSigned += '<ns4:CodigoMunicipio>' + s.codigoMunicipío + '</ns4:CodigoMunicipio>';
+                xmlToBeSigned += '<ns4:CodigoMunicipio>' + s.codigoMunicipio + '</ns4:CodigoMunicipio>';
                 xmlToBeSigned += '</ns4:Servico>';
             });
 
