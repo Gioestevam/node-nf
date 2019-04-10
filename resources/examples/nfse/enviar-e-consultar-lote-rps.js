@@ -46,25 +46,25 @@ const nodenf = require('../../../src/controllers/choice-nf');
  */
 
 //Exemplo GINFES
-const objectRio = {
+const objectSaoPaulo = {
 	"config": {
-		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio-de-janeiro.pfx",
-		"senhaDoCertificado": "12345678",
-		"producaoHomologacao": "homologacao",
-		"codigoMunicipio": "3304557"
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-sao-paulo.pfx",
+		"senhaDoCertificado": "123456789",
+		"producaoHomologacao": "producao",
+		"codigoMunicipio": "3550308"
 	},
 	"emissor": {
-		"cnpj": "10393366000121",
-		"inscricaoMunicipal": "04386965"
+		"cnpj": "14797440000126",
+		"inscricaoMunicipal": "44857624"
 	},
 	"rps": [{
-		"tipo": 1,
-		"dataEmissao": "2019-03-19T09:17:00",
+		"tipo": "RPS",
+		"dataEmissao": "2019-03-19",
 		"naturezaOperacao": "1",
 		"optanteSimplesNacional": "2",
 		"incentivadorCultural": "2",
-		"status": "1",
-		"servicos": [{
+		"status": "N",
+		"servico": {
 			"valorServicos": 105.00,
 			"valorDeducoes": 0.00,
 			"valorPis": 0.00,
@@ -72,7 +72,7 @@ const objectRio = {
 			"valorInss": 0.00,
 			"valorIr": 0.00,
 			"valorCsll": 0.00,
-			"issRetido": 2,
+			"issRetido": false,
 			"valorIss": 2.10,
 			"baseCalculo": 105.00,
 			"aliquota": 0.0200,
@@ -80,11 +80,11 @@ const objectRio = {
 			"itemListaServico": "1009",
 			"codigoTributacaoMunicipio": "461840200",
 			"discriminacao": "Ref. Servico Conforme O.S. Foi feito ajustes nas configuracoes do SITEF.;Foi feito a instalacao do PINPAD.;Foi feito testes de venda com cartao.",
-			"codigoMunicipio": "3523909"
-		}],
+			"codigoMunicipío": "3523909"
+		},
 		"prestador": {
-			"cnpj": "10393366000121",
-			"inscricaoMunicipal": "04386965"
+			"cnpj": "14797440000126",
+			"inscricaoMunicipal": "44857624"
 		},
 		"tomador": {
 			"cnpjCpf": "70523431000118",
@@ -108,8 +108,8 @@ const objectRio = {
 
 let objectFiveThousand = [];
 
-for (let i = 0; i < 2; i++) {
-    objectFiveThousand.push(objectRio);
+for (let i = 0; i < 1; i++) {
+    objectFiveThousand.push(objectSaoPaulo);
 }
 
 nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)

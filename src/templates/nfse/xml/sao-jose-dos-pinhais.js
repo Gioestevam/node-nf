@@ -264,30 +264,28 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<ns4:IncentivadorCultural>' + r.incentivadorCultural + '</ns4:IncentivadorCultural>';
             xmlToBeSigned += '<ns4:Status>' + r.status + '</ns4:Status>';
 
-            r.servicos.forEach(s => {
-                xmlToBeSigned += '<ns4:Servico>';
-                xmlToBeSigned += '<ns4:Valores>';
-                xmlToBeSigned += '<ns4:ValorServicos>' + s.valorServicos + '</ns4:ValorServicos>';
-                xmlToBeSigned += '<ns4:ValorDeducoes>' + s.valorDeducoes + '</ns4:ValorDeducoes>';
-                xmlToBeSigned += '<ns4:ValorPis>' + s.valorPis + '</ns4:ValorPis>';
-                xmlToBeSigned += '<ns4:ValorCofins>' + s.valorCofins + '</ns4:ValorCofins>';
-                xmlToBeSigned += '<ns4:ValorInss>' + s.valorInss + '</ns4:ValorInss>';
-                xmlToBeSigned += '<ns4:ValorIr>' + s.valorIr + '</ns4:ValorIr>';
-                xmlToBeSigned += '<ns4:ValorCsll>' + s.valorCsll + '</ns4:ValorCsll>';
-                xmlToBeSigned += '<ns4:IssRetido>' + s.issRetido + '</ns4:IssRetido>';
-                xmlToBeSigned += '<ns4:ValorIss>' + s.valorIss + '</ns4:ValorIss>';
-                xmlToBeSigned += '<ns4:BaseCalculo>' + s.baseCalculo + '</ns4:BaseCalculo>';
-                xmlToBeSigned += '<ns4:Aliquota>' + s.aliquota + '</ns4:Aliquota>';
-                xmlToBeSigned += '<ns4:ValorLiquidoNfse>' + s.valorLiquidoNfse + '</ns4:ValorLiquidoNfse>';
-                xmlToBeSigned += '</ns4:Valores>';
-                xmlToBeSigned += '<ns4:ItemListaServico>' + s.itemListaServico + '</ns4:ItemListaServico>';
-                if (s.codigoTributacaoMunicipio) {
-                    xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
-                }
-                xmlToBeSigned += '<ns4:Discriminacao>' + s.discriminacao + '</ns4:Discriminacao>';
-                xmlToBeSigned += '<ns4:CodigoMunicipio>' + s.codigoMunicipio + '</ns4:CodigoMunicipio>';
-                xmlToBeSigned += '</ns4:Servico>';
-            });
+            xmlToBeSigned += '<ns4:Servico>';
+            xmlToBeSigned += '<ns4:Valores>';
+            xmlToBeSigned += '<ns4:ValorServicos>' + r.servico.valorServicos + '</ns4:ValorServicos>';
+            xmlToBeSigned += '<ns4:ValorDeducoes>' + r.servico.valorDeducoes + '</ns4:ValorDeducoes>';
+            xmlToBeSigned += '<ns4:ValorPis>' + r.servico.valorPis + '</ns4:ValorPis>';
+            xmlToBeSigned += '<ns4:ValorCofins>' + r.servico.valorCofins + '</ns4:ValorCofins>';
+            xmlToBeSigned += '<ns4:ValorInss>' + r.servico.valorInss + '</ns4:ValorInss>';
+            xmlToBeSigned += '<ns4:ValorIr>' + r.servico.valorIr + '</ns4:ValorIr>';
+            xmlToBeSigned += '<ns4:ValorCsll>' + r.servico.valorCsll + '</ns4:ValorCsll>';
+            xmlToBeSigned += '<ns4:IssRetido>' + r.servico.issRetido + '</ns4:IssRetido>';
+            xmlToBeSigned += '<ns4:ValorIss>' + r.servico.valorIss + '</ns4:ValorIss>';
+            xmlToBeSigned += '<ns4:BaseCalculo>' + r.servico.baseCalculo + '</ns4:BaseCalculo>';
+            xmlToBeSigned += '<ns4:Aliquota>' + r.servico.aliquota + '</ns4:Aliquota>';
+            xmlToBeSigned += '<ns4:ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ns4:ValorLiquidoNfse>';
+            xmlToBeSigned += '</ns4:Valores>';
+            xmlToBeSigned += '<ns4:ItemListaServico>' + r.servico.itemListaServico + '</ns4:ItemListaServico>';
+            if (r.servico.codigoTributacaoMunicipio) {
+                xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
+            }
+            xmlToBeSigned += '<ns4:Discriminacao>' + r.servico.discriminacao + '</ns4:Discriminacao>';
+            xmlToBeSigned += '<ns4:CodigoMunicipio>' + r.servico.codigoMunicipio + '</ns4:CodigoMunicipio>';
+            xmlToBeSigned += '</ns4:Servico>';
 
             xmlToBeSigned += '<ns4:Prestador>';
             xmlToBeSigned += '<ns4:Cnpj>' + prestadorCnpj + '</ns4:Cnpj>';

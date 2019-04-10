@@ -1,6 +1,7 @@
 var ginfes  = require('../templates/nfse/xml/ginfes'),
     portoAlegre  = require('../templates/nfse/xml/porto-alegre'),
     rioDeJaneiro = require('../templates/nfse/xml/rio-de-janeiro'),
+    saoPaulo = require('../templates/nfse/xml/sao-paulo'),
     saoJoseDosPinhais = require('../templates/nfse/xml/sao-jose-dos-pinhais');
 
 function chooseModel (object, action) {
@@ -27,6 +28,16 @@ function chooseModel (object, action) {
                 });
         }
 
+        if (codigoMunicipio === '3550308') {
+            saoPaulo.createXml(object, action)
+                .then(xmlFromSaoPaulo => {
+                    resolve(xmlFromSaoPaulo);
+                })
+                .catch(errorSaoPaulo => {
+                    reject(errorSaoPaulo);
+                });
+        }
+        
         if (codigoMunicipio === '3304557') {
             rioDeJaneiro.createXml(object, action)
                 .then(xmlFromRioDeJaneiro => {

@@ -405,29 +405,28 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<OptanteSimplesNacional>' + r.optanteSimplesNacional + '</OptanteSimplesNacional>';
             xmlToBeSigned += '<IncentivadorCultural>' + r.incentivadorCultural + '</IncentivadorCultural>';
             xmlToBeSigned += '<Status>' + r.status + '</Status>';
-
-            r.servicos.forEach(s => {
-                xmlToBeSigned += '<Servico>';
-                xmlToBeSigned += '<Valores>';
-                xmlToBeSigned += '<ValorServicos>' + s.valorServicos + '</ValorServicos>';
-                xmlToBeSigned += '<ValorDeducoes>' + s.valorDeducoes + '</ValorDeducoes>';
-                xmlToBeSigned += '<ValorPis>' + s.valorPis + '</ValorPis>';
-                xmlToBeSigned += '<ValorCofins>' + s.valorCofins + '</ValorCofins>';
-                xmlToBeSigned += '<ValorInss>' + s.valorInss + '</ValorInss>';
-                xmlToBeSigned += '<ValorIr>' + s.valorIr + '</ValorIr>';
-                xmlToBeSigned += '<ValorCsll>' + s.valorCsll + '</ValorCsll>';
-                xmlToBeSigned += '<IssRetido>' + s.issRetido + '</IssRetido>';
-                xmlToBeSigned += '<ValorIss>' + s.valorIss + '</ValorIss>';
-                xmlToBeSigned += '<BaseCalculo>' + s.baseCalculo + '</BaseCalculo>';
-                xmlToBeSigned += '<Aliquota>' + s.aliquota + '</Aliquota>';
-                xmlToBeSigned += '<ValorLiquidoNfse>' + s.valorLiquidoNfse + '</ValorLiquidoNfse>';
-                xmlToBeSigned += '</Valores>';
-                xmlToBeSigned += '<ItemListaServico>' + s.itemListaServico + '</ItemListaServico>';
-                xmlToBeSigned += '<CodigoTributacaoMunicipio>' + s.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
-                xmlToBeSigned += '<Discriminacao>' + s.discriminacao + '</Discriminacao>';
-                xmlToBeSigned += '<CodigoMunicipio>' + s.codigoMunicipio + '</CodigoMunicipio>';
-                xmlToBeSigned += '</Servico>';
-            });
+            
+            xmlToBeSigned += '<Servico>';
+            xmlToBeSigned += '<Valores>';
+            xmlToBeSigned += '<ValorServicos>' + r.servico.valorServicos + '</ValorServicos>';
+            xmlToBeSigned += '<ValorDeducoes>' + r.servico.valorDeducoes + '</ValorDeducoes>';
+            xmlToBeSigned += '<ValorPis>' + r.servico.valorPis + '</ValorPis>';
+            xmlToBeSigned += '<ValorCofins>' + r.servico.valorCofins + '</ValorCofins>';
+            xmlToBeSigned += '<ValorInss>' + r.servico.valorInss + '</ValorInss>';
+            xmlToBeSigned += '<ValorIr>' + r.servico.valorIr + '</ValorIr>';
+            xmlToBeSigned += '<ValorCsll>' + r.servico.valorCsll + '</ValorCsll>';
+            xmlToBeSigned += '<IssRetido>' + r.servico.issRetido + '</IssRetido>';
+            xmlToBeSigned += '<ValorIss>' + r.servico.valorIss + '</ValorIss>';
+            xmlToBeSigned += '<BaseCalculo>' + r.servico.baseCalculo + '</BaseCalculo>';
+            xmlToBeSigned += '<Aliquota>' + r.servico.aliquota + '</Aliquota>';
+            xmlToBeSigned += '<ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ValorLiquidoNfse>';
+            xmlToBeSigned += '</Valores>';
+            xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico + '</ItemListaServico>';
+            xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
+            xmlToBeSigned += '<Discriminacao>' + r.servico.discriminacao + '</Discriminacao>';
+            xmlToBeSigned += '<CodigoMunicipio>' + r.servico.codigoMunicipio + '</CodigoMunicipio>';
+            xmlToBeSigned += '</Servico>';
+            
 
             xmlToBeSigned += '<Prestador>';
             xmlToBeSigned += '<Cnpj>' + prestadorCnpj + '</Cnpj>';
