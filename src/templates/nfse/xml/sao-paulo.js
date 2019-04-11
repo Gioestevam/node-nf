@@ -17,7 +17,7 @@ function createXml(object, action) {
     var url = '';
     return new Promise((resolve, reject) => {
         if (object.config.producaoHomologacao === 'producao') {
-            url = 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl';
+            url = 'https://nfe.prefeitura.sp.gov.br/ws/lotenfe.asmx?WSDL';
         } else {
             const result = {
                 message: 'São Paulo não tem ambiente de homologação'
@@ -25,7 +25,7 @@ function createXml(object, action) {
 
             resolve(result);
         }
-        console.log(action);
+        
         switch (action) {
             case 'postLotInvoice':
                 try {
@@ -121,7 +121,8 @@ function createXml(object, action) {
             case 'cancelInvoice':
                 try {
                     const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
-
+                    const prestadorIncricaoMunicipal = object.prestador.inscricaoMunicipal;
+                    
                     pem.readPkcs12(pfx, {
                         p12Password: object.config.senhaDoCertificado
                     }, (err, cert) => {
@@ -131,16 +132,22 @@ function createXml(object, action) {
                             });
                         }
 
-                        let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio" xmlns:ns4="http://www.prefeitura.sp.gov.br/nfe/tipos">';
-                        xml += '<ns3:Prestador>';
-                        xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
-                        xml += '</ns3:Prestador>';
+                        let xml = '<PedidoCancelamentoNFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.prefeitura.sp.gov.br/nfe">';
+                        xml += '<Cabecalho Versao="1">';
+                        xml += '<CPFCNPJRemetente><CNPJ>' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + '</CNPJ></CPFCNPJRemetente>';
+                        xml += '<transacao>1</transacao>';
+                        xml += '</Cabecalho>';
+                        xml += '<Detalhe>';
+                        xmlToBeSigned += '<ChaveNFe>';
+                        xmlToBeSigned += '<InscricaoPrestador>' + prestadorIncricaoMunicipal + '</InscricaoPrestador>';
+                        xmlToBeSigned += '<NumeroNFe>' + object.numeroNfse + '</NumeroNFe>';
+                        xmlToBeSigned += '</ChaveNFe>';
+                        xml += '</Detalhe>';
                         xml += '<ns3:NumeroNfse>' + object.numeroNfse + '</ns3:NumeroNfse>';
-                        xml += '</ns3:CancelarNfseEnvio>';
+                        xml += '</PedidoCancelamentoNFe>';
 
                         createSignature(xml, cert, 'CancelarNfseEnvio', true).then(xmlSignature => {
-                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/ginfes/schemas_v202/servico_cancelar_nfse_envio_v02.xsd', function (err, validatorResult) {
+                            validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/sao-paulo/PedidoCancelamentoNFe_v01.xsd', function (err, validatorResult) {
                                 if (err) {
                                     console.log(err);
                                     resolve(err);
