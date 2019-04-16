@@ -469,7 +469,6 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<ns4:OptanteSimplesNacional>' + r.optanteSimplesNacional + '</ns4:OptanteSimplesNacional>';
             xmlToBeSigned += '<ns4:IncentivadorCultural>' + r.incentivadorCultural + '</ns4:IncentivadorCultural>';
             xmlToBeSigned += '<ns4:Status>' + r.status + '</ns4:Status>';
-
             
             xmlToBeSigned += '<ns4:Servico>';
             xmlToBeSigned += '<ns4:Valores>';

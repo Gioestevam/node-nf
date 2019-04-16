@@ -134,14 +134,14 @@ function createXml(object, action) {
 
                         let xml = '<PedidoCancelamentoNFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.prefeitura.sp.gov.br/nfe">';
                         xml += '<Cabecalho Versao="1">';
-                        xml += '<CPFCNPJRemetente><CNPJ>' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + '</CNPJ></CPFCNPJRemetente>';
+                        xml += '<CPFCNPJRemetente><CNPJ>' + object.prestador.cnpj.replace(/\.|\/|\s/g, '') + '</CNPJ></CPFCNPJRemetente>';
                         xml += '<transacao>1</transacao>';
                         xml += '</Cabecalho>';
                         xml += '<Detalhe>';
-                        xmlToBeSigned += '<ChaveNFe>';
-                        xmlToBeSigned += '<InscricaoPrestador>' + prestadorIncricaoMunicipal + '</InscricaoPrestador>';
-                        xmlToBeSigned += '<NumeroNFe>' + object.numeroNfse + '</NumeroNFe>';
-                        xmlToBeSigned += '</ChaveNFe>';
+                        xml += '<ChaveNFe>';
+                        xml += '<InscricaoPrestador>' + prestadorIncricaoMunicipal + '</InscricaoPrestador>';
+                        xml += '<NumeroNFe>' + object.numeroNfse + '</NumeroNFe>';
+                        xml += '</ChaveNFe>';
                         xml += '</Detalhe>';
                         xml += '<ns3:NumeroNfse>' + object.numeroNfse + '</ns3:NumeroNfse>';
                         xml += '</PedidoCancelamentoNFe>';
