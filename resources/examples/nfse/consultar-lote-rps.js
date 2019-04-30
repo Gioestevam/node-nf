@@ -13,6 +13,20 @@ const nodenf = require('../../../src/controllers/choice-nf');
  */
 
  //Exemplo GINFES
+ const objectGinfes = {
+	"config": {
+		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
+		"senhaDoCertificado": "brmed2018",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3523909"
+	},
+	"prestador": {
+		"cnpj": "17845667000198",
+		"inscricaoMunicipal": "25099"
+	},
+	"protocolo": "9342689"
+}
+
  const objectRio = {
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio-de-janeiro.pfx",
@@ -40,7 +54,7 @@ const objectSaoJoseDosPinhaisSearchRpsLot = {
 	"protocolo": "9314844"
 }
 
-nodenf.searchRpsLot('nfse', objectRio)
+nodenf.searchRpsLot('nfse', objectGinfes)
 	.then(res => {
 		console.log(res);
 	}).catch(err => {

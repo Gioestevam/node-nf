@@ -1,5 +1,30 @@
 {
     "cities": [{
+        "code": "5205109",
+        "name": "Catalão",
+        "uf": "GO",
+        "nfseKeyword": "catalao"
+    }, {
+        "code": "3550308",
+        "name": "São Paulo",
+        "uf": "SP",
+        "nfseKeyword": "saoPaulo"
+    }, {
+        "code": "3304557",
+        "name": "Rio de Janeiro",
+        "uf": "RJ",
+        "nfseKeyword": "rioDeJaneiro"
+    }, {
+        "code": "4125506",
+        "name": "São José dos Pinhais",
+        "uf": "PR",
+        "nfseKeyword": "saoJoseDosPinhais"
+    }, {
+        "code": "4314902",
+        "name": "Porto Alegre",
+        "uf": "RS",
+        "nfseKeyword": "portoAlegre"
+    }, {
         "code": "1506807",
         "name": "Santarém",
         "uf": "PA",

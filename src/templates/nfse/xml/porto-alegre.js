@@ -32,9 +32,9 @@ function createXml(object, action) {
                             });
                         }
                         let xml = '<EnviarLoteRpsEnvio  xmlns="http://www.abrasf.org.br/nfse.xsd">';
-                        xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + '" versao="1.00">';
+                        xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '" versao="1.00">';
                         xml += '<NumeroLote>' + timestamp + '</NumeroLote>';
-                        xml += '<Cnpj>' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + '</Cnpj>';
+                        xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xml += '<QuantidadeRps>' + object.rps.length + '</QuantidadeRps>';
                         xml += '<ListaRps>';
@@ -121,20 +121,20 @@ function addSignedXml(object, cert) {
         let xmlToBeSignedArray = [];
         let xmlSignedArray = [];
         object.rps.forEach((r, index) => {
-            let prestadorCnpj = object.emissor.cnpj.replace(/\.|\/|\s/g, '');
+            let prestadorCnpj = object.emissor.cnpj.replace(/[^\d]+/g,'');
             let prestadorIncricaoMunicipal = object.emissor.inscricaoMunicipal;
             if (r.prestador) {
-                prestadorCnpj = r.prestador.cnpj.replace(/\.|\/|\s/g, '');
+                prestadorCnpj = r.prestador.cnpj.replace(/[^\d]+/g,'');
                 prestadorIncricaoMunicipal = r.prestador.inscricaoMunicipal;
             }
             xmlToBeSigned += '<Rps>';
-            xmlToBeSigned += '<InfRps Id="' + object.emissor.cnpj.replace(/\.|\/|\s/g, '') + timestamp + 'RPS' + index + '">';
+            xmlToBeSigned += '<InfRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + 'RPS' + index + '">';
             xmlToBeSigned += '<IdentificacaoRps>';
             xmlToBeSigned += '<Numero>' + timestamp + index + '</Numero>';
             xmlToBeSigned += '<Serie>RPS</Serie>';
             xmlToBeSigned += '<Tipo>' + r.tipo + '</Tipo>';
             xmlToBeSigned += '</IdentificacaoRps>';
-            xmlToBeSigned += '<DataEmissao>' + r.dataEmissao + '</DataEmissao>';
+            xmlToBeSigned += '<DataEmissao>' + r.dataEmissao.replace(/\s/g, 'T') + '</DataEmissao>';
             xmlToBeSigned += '<NaturezaOperacao>' + r.naturezaOperacao + '</NaturezaOperacao>';
             xmlToBeSigned += '<OptanteSimplesNacional>' + r.optanteSimplesNacional + '</OptanteSimplesNacional>';
             xmlToBeSigned += '<IncentivadorCultural>' + r.incentivadorCultural + '</IncentivadorCultural>';
@@ -168,10 +168,10 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<Tomador>';
             xmlToBeSigned += '<IdentificacaoTomador>';
             xmlToBeSigned += '<CpfCnpj>';
-            if (r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '').length > 11) {
-                xmlToBeSigned += '<Cnpj>' + r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '') + '</Cnpj>';
+            if (r.tomador.cnpjCpf.replace(/[^\d]+/g,'').length > 11) {
+                xmlToBeSigned += '<Cnpj>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cnpj>';
             } else {
-                xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/\.|\/|\s/g, '') + '</Cpf>';
+                xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cpf>';
             }
             xmlToBeSigned += '</CpfCnpj>';
             xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';

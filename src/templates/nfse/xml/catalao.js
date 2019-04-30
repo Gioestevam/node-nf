@@ -15,7 +15,7 @@ const timestamp = Date.now();
 
 function createXml(object, action) {
     var url = '';
-    object.config.producaoHomologacao === 'producao' ? url = 'https://notacarioca.rio.gov.br/WSNacional/nfse.asmx?wsdl' : url = 'https://homologacao.notacarioca.rio.gov.br/WSNacional/nfse.asmx?wsdl';
+    object.config.producaoHomologacao === 'producao' ? url = 'http://200.23.238.210/prodataws/services/NfseWSService?wsdl' : url = 'http://200.23.238.210:8585/prodataws/services/NfseWSService?wsdl';
 
     return new Promise((resolve, reject) => {
         const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
@@ -62,13 +62,13 @@ function createXml(object, action) {
                                         }
                                     });
 
-                                    let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                                    let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://services.nfse">';
                                     xml += '<soapenv:Header/>';
                                     xml += '<soapenv:Body>';
                                     xml += '<not:RecepcionarLoteRpsRequest>';
-                                    xml += '<not:inputXML>';
+                                    xml += '<nfseDadosMsg>';
                                     xml += '<![CDATA[' + xmlSignature + ']]>';
-                                    xml += '</not:inputXML>';
+                                    xml += '</nfseDadosMsg>';
                                     xml += '</not:RecepcionarLoteRpsRequest>';
                                     xml += '</soapenv:Body>';
                                     xml += '</soapenv:Envelope>';
@@ -405,59 +405,21 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<OptanteSimplesNacional>' + r.optanteSimplesNacional + '</OptanteSimplesNacional>';
             xmlToBeSigned += '<IncentivadorCultural>' + r.incentivadorCultural + '</IncentivadorCultural>';
             xmlToBeSigned += '<Status>' + r.status + '</Status>';
-            if (r.rpsSubstituido) {
-                xmlToBeSigned += '<RpsSubstituido>' + r.rpsSubstituido + '</RpsSubstituido>';
-            }
-
-            // TO-DO: IntermediadorServico
-            // TO-DO: ConstucaoCivil
-
+            
             xmlToBeSigned += '<Servico>';
             xmlToBeSigned += '<Valores>';
             xmlToBeSigned += '<ValorServicos>' + r.servico.valorServicos + '</ValorServicos>';
-            if (r.servico.valorDeducoes) {
-                xmlToBeSigned += '<ValorDeducoes>' + r.servico.valorDeducoes + '</ValorDeducoes>';
-            }
-            if (r.servico.valorPis) {
-                xmlToBeSigned += '<ValorPis>' + r.servico.valorPis + '</ValorPis>';
-            }
-            if (r.servico.valorCofins) {
-                xmlToBeSigned += '<ValorCofins>' + r.servico.valorCofins + '</ValorCofins>';
-            }
-            if (r.servico.valorInss) {
-                xmlToBeSigned += '<ValorInss>' + r.servico.valorInss + '</ValorInss>';
-            }
-            if (r.servico.valorIr) {
-                xmlToBeSigned += '<ValorIr>' + r.servico.valorIr + '</ValorIr>';
-            }
-            if (r.servico.valorCsll) {
-                xmlToBeSigned += '<ValorCsll>' + r.servico.valorCsll + '</ValorCsll>';
-            }
+            xmlToBeSigned += '<ValorDeducoes>' + r.servico.valorDeducoes + '</ValorDeducoes>';
+            xmlToBeSigned += '<ValorPis>' + r.servico.valorPis + '</ValorPis>';
+            xmlToBeSigned += '<ValorCofins>' + r.servico.valorCofins + '</ValorCofins>';
+            xmlToBeSigned += '<ValorInss>' + r.servico.valorInss + '</ValorInss>';
+            xmlToBeSigned += '<ValorIr>' + r.servico.valorIr + '</ValorIr>';
+            xmlToBeSigned += '<ValorCsll>' + r.servico.valorCsll + '</ValorCsll>';
             xmlToBeSigned += '<IssRetido>' + r.servico.issRetido + '</IssRetido>';
-            if (r.servico.valorIss) {
-                xmlToBeSigned += '<ValorIss>' + r.servico.valorIss + '</ValorIss>';
-            }
-            if (r.servico.valorIssRetido) {
-                xmlToBeSigned += '<ValorIssRetido>' + r.servico.valorIssRetido + '</ValorIssRetido>';
-            }
-            if (r.servico.outrasRetencoes) {
-                xmlToBeSigned += '<OutrasRetencoes>' + r.servico.outrasRetencoes + '</OutrasRetencoes>';
-            }
-            if (r.servico.baseCalculo) {
-                xmlToBeSigned += '<BaseCalculo>' + r.servico.baseCalculo + '</BaseCalculo>';
-            }
-            if (r.servico.aliquota) {
-                xmlToBeSigned += '<Aliquota>' + r.servico.aliquota + '</Aliquota>';
-            }
-            if (r.servico.valorLiquidoNfse) {
-                xmlToBeSigned += '<ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ValorLiquidoNfse>';
-            }
-            if (r.servico.descontoIncondicionado) {
-                xmlToBeSigned += '<DescontoIncondicionado>' + r.servico.descontoIncondicionado + '</DescontoIncondicionado>';
-            }
-            if (r.servico.descontoCondicionado) {
-                xmlToBeSigned += '<DescontoCondicionado>' + r.servico.descontoCondicionado + '</DescontoCondicionado>';
-            }
+            xmlToBeSigned += '<ValorIss>' + r.servico.valorIss + '</ValorIss>';
+            xmlToBeSigned += '<BaseCalculo>' + r.servico.baseCalculo + '</BaseCalculo>';
+            xmlToBeSigned += '<Aliquota>' + r.servico.aliquota + '</Aliquota>';
+            xmlToBeSigned += '<ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ValorLiquidoNfse>';
             xmlToBeSigned += '</Valores>';
             xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico + '</ItemListaServico>';
             xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
@@ -468,9 +430,7 @@ function addSignedXml(object, cert) {
 
             xmlToBeSigned += '<Prestador>';
             xmlToBeSigned += '<Cnpj>' + prestadorCnpj + '</Cnpj>';
-            if (prestadorIncricaoMunicipal) {
-                xmlToBeSigned += '<InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</InscricaoMunicipal>';
-            }
+            xmlToBeSigned += '<InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</InscricaoMunicipal>';
             xmlToBeSigned += '</Prestador>';
             xmlToBeSigned += '<Tomador>';
             xmlToBeSigned += '<IdentificacaoTomador>';
@@ -481,38 +441,20 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cpf>';
             }
             xmlToBeSigned += '</CpfCnpj>';
-            if (r.tomador.inscricaoMunicipal) {
-                xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
-            }
+            xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
             xmlToBeSigned += '</IdentificacaoTomador>';
             xmlToBeSigned += '<RazaoSocial>' + r.tomador.razaoSocial + '</RazaoSocial>';
             xmlToBeSigned += '<Endereco>';
-            if (r.tomador.endereco.endereco) {
-                xmlToBeSigned += '<Endereco>' + r.tomador.endereco.endereco + '</Endereco>';
-            }
-            if (r.tomador.endereco.numero) {
-                xmlToBeSigned += '<Numero>' + r.tomador.endereco.numero + '</Numero>';
-            }
-            if (r.tomador.endereco.bairro) {                
-                xmlToBeSigned += '<Bairro>' + r.tomador.endereco.bairro + '</Bairro>';
-            }
-            if (r.tomador.endereco.codigoMunicipio) {
-                xmlToBeSigned += '<CodigoMunicipio>' + r.tomador.endereco.codigoMunicipio + '</CodigoMunicipio>';
-            }
-            if (r.tomador.endereco.uf) {
-                xmlToBeSigned += '<Uf>' + r.tomador.endereco.uf + '</Uf>';
-            }
-            if (r.tomador.endereco.cep) {
-                xmlToBeSigned += '<Cep>' + r.tomador.endereco.cep + '</Cep>';
-            }
+            xmlToBeSigned += '<Endereco>' + r.tomador.endereco.endereco + '</Endereco>';
+            xmlToBeSigned += '<Numero>' + r.tomador.endereco.numero + '</Numero>';
+            xmlToBeSigned += '<Bairro>' + r.tomador.endereco.bairro + '</Bairro>';
+            xmlToBeSigned += '<CodigoMunicipio>' + r.tomador.endereco.codigoMunicipio + '</CodigoMunicipio>';
+            xmlToBeSigned += '<Uf>' + r.tomador.endereco.uf + '</Uf>';
+            xmlToBeSigned += '<Cep>' + r.tomador.endereco.cep + '</Cep>';
             xmlToBeSigned += '</Endereco>';
             xmlToBeSigned += '<Contato>';
-            if (r.tomador.contato.telefone) {
-                xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
-            }
-            if (r.tomador.contato.email) {
-                xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
-            }
+            xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
+            xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
             xmlToBeSigned += '</Contato>';
             xmlToBeSigned += '</Tomador>';
             xmlToBeSigned += '</InfRps>';

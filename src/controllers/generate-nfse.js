@@ -18,7 +18,7 @@ function chooseModel(object, action) {
                 keyword = city.nfseKeyword;
             }
         }
-        console.log(keyword);
+        
         if (keyword === 'ginfes') {
             ginfes.createXml(object, action)
                 .then(xmlFromGinfes => {
@@ -29,7 +29,17 @@ function chooseModel(object, action) {
                 });
         }
 
-        if (codigoMunicipio === '4314902') {
+        if (keyword === 'catalao') {
+            ginfes.createXml(object, action)
+                .then(xmlFromCatalao => {
+                    resolve(xmlFromCatalao);
+                })
+                .catch(errorCatalao => {
+                    reject(errorCatalao);
+                });
+        }
+
+        if (keyword === 'portoAlegre') {
             portoAlegre.createXml(object, action)
                 .then(xmlFromPortoAlegre => {
                     resolve(xmlFromPortoAlegre);
@@ -39,7 +49,7 @@ function chooseModel(object, action) {
                 });
         }
 
-        if (codigoMunicipio === '3550308') {
+        if (keyword === 'saoPaulo') {
             saoPaulo.createXml(object, action)
                 .then(xmlFromSaoPaulo => {
                     resolve(xmlFromSaoPaulo);
@@ -49,7 +59,7 @@ function chooseModel(object, action) {
                 });
         }
 
-        if (codigoMunicipio === '3304557') {
+        if (keyword === 'rioDeJaneiro') {
             rioDeJaneiro.createXml(object, action)
                 .then(xmlFromRioDeJaneiro => {
                     resolve(xmlFromRioDeJaneiro);
@@ -59,7 +69,7 @@ function chooseModel(object, action) {
                 });
         }
 
-        if (codigoMunicipio === '4125506') {
+        if (keyword === 'saoJoseDosPinhais') {
             saoJoseDosPinhais.createXml(object, action)
                 .then(xmlFromSaoJoseDosPinhais => {
                     resolve(xmlFromSaoJoseDosPinhais);

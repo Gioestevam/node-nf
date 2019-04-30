@@ -31,7 +31,6 @@ const postLotInvoice = function (invoiceType, object, index) {
                             result: resultArrayPostLotInvoice
                         }
                         
-                        console.log(result);
                         resolvePostLot(result);
                     }
                 })
@@ -47,7 +46,7 @@ const postLotInvoice = function (invoiceType, object, index) {
     })
 }
 
-const postAndSearchLotInvoice = function (invoiceType, object, index) {
+const postAndSearchLotInvoice = async function (invoiceType, object, index) {
     if (index === 0) {
         let message = '';
         (object.length > 1) ? message = `${object.length} lotes enviados`: message = '1 lote enviado';
@@ -64,6 +63,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                     .then(webServiceResponse => {
                         let objectToSearchRpsLot = {};
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
+
                         if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
                             objectToSearchRpsLot = {
                                 config: object[newIndex - 1].config,
@@ -84,15 +84,15 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                             } else {
                                 const result = {
                                     message: `${object.length} lotes enviados`,
-                                    result: webServiceResponse
+                                    result: webServiceResponse.body
                                 }
-                                console.log(result);
+                                
                                 resolvePostAndSearch(result);
                             }
                         }
     
                         if (objectToSearchRpsLot.config) {
-                            setTimeout(function () {
+                            setTimeout(function () {                                
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
                                         if ((newIndex - 1) < (object.length - 1)) {
@@ -100,7 +100,8 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                                             postAndSearchLotInvoice('nfse', object, newIndex);
                                         } else {
                                             resultArraySearchRpsLot.push(resolveSearchRpsLot);
-                                            const result = {
+                                            
+                                            const result = { 
                                                 message: `${object.length} lotes enviados`,
                                                 resultSearchRpsLot: resultArraySearchRpsLot,
                                                 resultPostLotInvoice: resultArrayPostLotInvoice
@@ -111,7 +112,7 @@ const postAndSearchLotInvoice = function (invoiceType, object, index) {
                                     })
                                     .catch(rejectSearchRpsLot => {
                                         console.log(rejectSearchRpsLot);
-                                        reject(rejectSearchRpsLot);
+                                        rejectPostAndSearch(rejectSearchRpsLot);
                                     })
                             }, 10000);
                         }
@@ -198,11 +199,11 @@ const searchRpsLot = function (invoiceType, object) {
                                 resolve(responseBody);
                             }
                         } else {
-                            resolve(responseBody);
+                            resolve(webServiceResponse.body);
                         }
                     }).catch(webServiceResponseError => {
                         reject(webServiceResponseError);
-                    })
+                    });
             }).catch(postSearchRpsLotResponseError => {
                 console.log(postSearchRpsLotResponseError);
                 reject(postSearchRpsLotResponseError);
