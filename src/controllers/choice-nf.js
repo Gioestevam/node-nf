@@ -298,7 +298,8 @@ function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath
                         "Accept": "text/xml",
                         "Content-Type": "text/xml;charset=UTF-8"
                     },
-                    body: xmlEnveloped
+                    body: xmlEnveloped,
+                    pool: {maxSockets: Infinity}
                 };
     
                 if (soapAction) {
@@ -308,17 +309,21 @@ function webServiceRequest(xmlEnveloped, url, soapAction = null, certificatePath
                         "SOAPAction": soapAction,
                     }
                 }
-                
                 request(options, function (error, response, body) {
                     if (error) {
                         const result = {
                             message: 'Verifique se o webservice está online',
                             error: error 
                         };
-                        console.log(result);
-                        reject(result);
+                        
+                        if (result.error.code === 'ECONNRESET') {
+                            setTimeout(() => {
+                                webServiceRequest(xmlEnveloped, url, soapAction, certificatePath, certificatePassword);
+                            }, 20000)
+                        } else {
+                            reject(result);
+                        }
                     }
-                    
                     resolve(response);
                 });
             } catch (error) {
