@@ -1,4 +1,4 @@
-#NOTA-FISCAL
+#[NOTA-FISCAL](https://github.com/giryco/node-nf)
 > Gerador de NF-e, NFS-e e NFC-e
 
 ##Instalação
@@ -6,7 +6,7 @@
 npm install --save nota-fiscal@latest
 ```
 
-##Exemplo de utilização
+##Exemplos de utilização para NFS-e
 ###Enviar lote de RPS
 ```
 const nf = require('nota-fiscal');
@@ -71,10 +71,118 @@ const objectGinfes = {
 	}]
 };
 
-nodenf.postLotInvoice('nfse', objectGinfes, 0)
+nf.postLotInvoice('nfse', objectGinfes, 0)
 	.then(res => {
 		console.log(res);
 	}).catch(err => {
 		console.log(err);
+	});
+```
+
+###Consultar lote de RPS
+```
+const nf = require('nota-fiscal');
+
+const objectGinfes = {
+	"config": {
+		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
+		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3523909"
+	},
+	"prestador": {
+		"cnpj": "00000001000000",
+        "inscricaoMunicipal": "200000"
+	},
+	"protocolo": "9342689"
+};
+
+nf.searchRpsLot('nfse', objectGinfes)
+	.then(res => {
+		console.log(res);
+	}).catch(err => {
+		console.log(err);
+	});
+```
+
+###Cancelar NFSE
+```
+const nf = require('nota-fiscal');
+
+const objectGinfes = {
+	"config": {
+		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
+		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3523909"
+	},
+	"prestador": {
+		"cnpj": "00000001000000",
+        "inscricaoMunicipal": "200000"
+	},
+	"numeroNfse": 214
+};
+
+nf.cancelInvoice('nfse', objectGinfes)
+	.then(res => {
+		console.log(res);
+	}).catch(err => {
+		console.log(err);
+	});
+```
+
+###Consultar NFS-e por RPS
+```
+const nf = require('nota-fiscal');
+
+const objectGinfes = {
+	"config": {
+		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
+		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3523909"
+	},
+	"prestador": {
+		"cnpj": "00000001000000",
+        "inscricaoMunicipal": "200000"
+	},
+    "identificacaoRps": {
+		"numero": 15543793754810,
+		"serie": "RPS",
+		"tipo": 1
+	}
+};
+
+nf.searchNfseByRps('nfse', objectGinfes)
+	.then(res => {
+		console.log(res);
+	}).catch(err => {
+		console.log(err);
+	});
+```
+
+###Consultar situação lote
+```
+const nf = require('nota-fiscal');
+
+const objectGinfes = {
+	"config": {
+		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
+		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
+		"producaoHomologacao": "homologacao",
+		"codigoMunicipio": "3523909"
+	},
+	"prestador": {
+		"cnpj": "00000001000000",
+        "inscricaoMunicipal": "200000"
+	},
+	"protocolo": "9311682"
+};
+
+nf.searchSituation('nfse', objectGinfes)
+	.then(res => {
+		console.log(res);
+	}).catch(err => {
+		console.log(err)
 	});
 ```
