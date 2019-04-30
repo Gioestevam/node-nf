@@ -7,6 +7,8 @@ let resultArrayPostLotInvoice = [];
 let resultArraySearchRpsLot = [];
 
 const postLotInvoice = function (invoiceType, object, index) {
+    resultArrayPostLotInvoice = [];
+    
     if (index === 0) {
         let message = '';
         (object.length > 1) ? message = `${object.length} lotes enviados`: message = '1 lote enviado';
@@ -63,7 +65,7 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                     .then(webServiceResponse => {
                         let objectToSearchRpsLot = {};
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
-
+                        
                         if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
                             objectToSearchRpsLot = {
                                 config: object[newIndex - 1].config,
@@ -92,7 +94,7 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                         }
     
                         if (objectToSearchRpsLot.config) {
-                            setTimeout(function () {                                
+                            setTimeout(function () { 
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
                                         if ((newIndex - 1) < (object.length - 1)) {

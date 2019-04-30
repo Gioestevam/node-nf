@@ -174,7 +174,7 @@ const objectGinfes = {
 		"codigoMunicipio": "3523909"
 	},
 	"emissor": {
-		"cnpj": "17845667000191",
+		"cnpj": "17845667000198",
 		"inscricaoMunicipal": "25099"
 	},
 	"rps": [{
@@ -203,7 +203,7 @@ const objectGinfes = {
 			"codigoMunicipio": "3523909"
 		},
 		"prestador": {
-			"cnpj": "17845667000191",
+			"cnpj": "17845667000198",
 			"inscricaoMunicipal": "25099"
 		},
 		"tomador": {
