@@ -1,10 +1,17 @@
 #[NOTA-FISCAL](https://github.com/giryco/node-nf)
-> Gerador de NF-e, NFS-e e NFC-e
+> Gerador de NF-e, NFS-e e NFC-e (Atendendo apenas NFS-e na versão atual)
 
 ##Instalação
 ```
 npm install --save nota-fiscal@latest
 ```
+
+##Últimas alterações
+- Atendendo os municípios do padrão GINFES (listados no arquivo cities.json - avise-nos se souberem mais atendidos pela ginfes)
+- Atendendo Rio de Janeiro
+- Atendendo Porto Alegre
+- Atendendo Catalão
+- Atendendo São José dos Pinhais
 
 ##Exemplos de utilização para NFS-e
 ###Enviar lote de RPS
