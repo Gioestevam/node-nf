@@ -49,6 +49,8 @@ const postLotInvoice = function (invoiceType, object, index) {
 }
 
 const postAndSearchLotInvoice = async function (invoiceType, object, index) {
+    resultArrayPostLotInvoice = [];
+
     if (index === 0) {
         let message = '';
         (object.length > 1) ? message = `${object.length} lotes enviados`: message = '1 lote enviado';
@@ -84,10 +86,21 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                             if ((newIndex - 1) < (object.length - 1)) {
                                 postAndSearchLotInvoice('nfse', object, newIndex);
                             } else {
+                                let numeroLote;
+                                
+                                if (postLotInvoiceResponse.soapEnvelop.split('<NumeroLote>').length > 1) {
+                                    numeroLote = postLotInvoiceResponse.soapEnvelop.split('<NumeroLote>')[1].split('</NumeroLote>')[0];
+                                }
+
+                                if (postLotInvoiceResponse.soapEnvelop.split('<ns4:NumeroLote>').length > 1) {
+                                    numeroLote = postLotInvoiceResponse.soapEnvelop.split('<ns4:NumeroLote>')[1].split('</ns4:NumeroLote>')[0];
+                                }
+
                                 const result = {
                                     message: `${object.length} lotes enviados`,
+                                    numeroLote: numeroLote,
                                     resultPostLotInvoice: webServiceResponse.body
-                                }
+                                };
                                 
                                 resolvePostAndSearch(result);
                             }

@@ -94,7 +94,7 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarSituacaoLoteRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj + '</Cnpj>';
+                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xmlContent += '</Prestador>';
                         xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
@@ -128,7 +128,7 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarLoteRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj + '</Cnpj>';
+                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xmlContent += '</Prestador>';
                         xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
@@ -179,7 +179,7 @@ function createXml(object, action) {
                         xmlContent += '<Tipo>' + object.identificacaoRps.tipo + '</Tipo>';
                         xmlContent += '</IdentificacaoRps>';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj + '</Cnpj>';
+                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xmlContent += '</Prestador>';
                         xmlContent += '</ConsultarNfseRpsEnvio>';
@@ -212,7 +212,7 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarNfseEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj + '</Cnpj>';
+                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xmlContent += '</Prestador>';
                         xmlContent += '<PeriodoEmissao>';
@@ -261,7 +261,7 @@ function createXml(object, action) {
                         xml += '<InfPedidoCancelamento Id="Cancelamento_NF' + object.infPedidoCancelamento.identificacaoNfse.numero + '">';
                         xml += '<IdentificacaoNfse>';
                         xml += '<Numero>' + object.infPedidoCancelamento.identificacaoNfse.numero + '</Numero>';
-                        xml += '<Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj + '</Cnpj>';
+                        xml += '<Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xml += '<InscricaoMunicipal>' + object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xml += '<CodigoMunicipio>' + object.infPedidoCancelamento.identificacaoNfse.codigoMunicipio + '</CodigoMunicipio>';
                         xml += '</IdentificacaoNfse>';
