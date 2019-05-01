@@ -86,6 +86,9 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                             if ((newIndex - 1) < (object.length - 1)) {
                                 postAndSearchLotInvoice('nfse', object, newIndex);
                             } else {
+                                // Protocol not found
+                                // There will be no search over this lot invoice
+                                
                                 let numeroLote;
                                 
                                 if (postLotInvoiceResponse.soapEnvelop.split('<NumeroLote>').length > 1) {
