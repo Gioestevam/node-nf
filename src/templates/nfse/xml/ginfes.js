@@ -494,7 +494,7 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '</ns4:Servico>';
 
             xmlToBeSigned += '<ns4:Prestador>';
-            xmlToBeSigned += '<ns4:Cnpj>' + prestadorCnpj + '</ns4:Cnpj>';
+            xmlToBeSigned += '<ns4:Cnpj>' + prestadorCnpj.replace(/[^\d]+/g,'') +'</ns4:Cnpj>';
             xmlToBeSigned += '<ns4:InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</ns4:InscricaoMunicipal>';
             xmlToBeSigned += '</ns4:Prestador>';
             xmlToBeSigned += '<ns4:Tomador>';
