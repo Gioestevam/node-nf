@@ -50,6 +50,7 @@ const postLotInvoice = function (invoiceType, object, index) {
 
 const postAndSearchLotInvoice = async function (invoiceType, object, index) {
     resultArrayPostLotInvoice = [];
+    resultArraySearchRpsLot = [];
 
     if (index === 0) {
         let message = '';
