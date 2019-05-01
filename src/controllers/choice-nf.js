@@ -165,6 +165,7 @@ const searchSituation = function (invoiceType, object) {
 }
 
 const searchRpsLot = function (invoiceType, object) {
+    resultArraySearchRpsLot = [];
     return new Promise((resolve, reject) => {
         choiceTemplate.searchRpsLotModel(invoiceType, object, 'searchRpsLot')
             .then(postSearchRpsLotResponse => {
