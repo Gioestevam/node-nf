@@ -11,7 +11,7 @@ npm install --save nota-fiscal@latest
 ```
 const nf = require('nota-fiscal');
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
 		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
@@ -69,7 +69,7 @@ const objectGinfes = {
 			}
 		}
 	}]
-};
+}];
 
 nf.postLotInvoice('nfse', objectGinfes, 0)
 	.then(res => {
@@ -83,7 +83,7 @@ nf.postLotInvoice('nfse', objectGinfes, 0)
 ```
 const nf = require('nota-fiscal');
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
 		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
@@ -95,7 +95,7 @@ const objectGinfes = {
         "inscricaoMunicipal": "200000"
 	},
 	"protocolo": "9342689"
-};
+}];
 
 nf.searchRpsLot('nfse', objectGinfes)
 	.then(res => {
@@ -109,7 +109,7 @@ nf.searchRpsLot('nfse', objectGinfes)
 ```
 const nf = require('nota-fiscal');
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
 		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
@@ -121,7 +121,7 @@ const objectGinfes = {
         "inscricaoMunicipal": "200000"
 	},
 	"numeroNfse": 214
-};
+}];
 
 nf.cancelInvoice('nfse', objectGinfes)
 	.then(res => {
@@ -135,7 +135,7 @@ nf.cancelInvoice('nfse', objectGinfes)
 ```
 const nf = require('nota-fiscal');
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
 		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
@@ -151,7 +151,7 @@ const objectGinfes = {
 		"serie": "RPS",
 		"tipo": 1
 	}
-};
+}];
 
 nf.searchNfseByRps('nfse', objectGinfes)
 	.then(res => {
@@ -165,7 +165,7 @@ nf.searchNfseByRps('nfse', objectGinfes)
 ```
 const nf = require('nota-fiscal');
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/atalho/para/certificado.pfx",
 		"senhaDoCertificado": "su$S3nh@P4r@0C3Rt1fiC4d0",
@@ -177,7 +177,7 @@ const objectGinfes = {
         "inscricaoMunicipal": "200000"
 	},
 	"protocolo": "9311682"
-};
+}];
 
 nf.searchSituation('nfse', objectGinfes)
 	.then(res => {

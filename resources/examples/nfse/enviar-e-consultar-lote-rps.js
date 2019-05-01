@@ -106,7 +106,7 @@ const objectSaoPaulo = {
 	}]
 };
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
 		"senhaDoCertificado": "brmed2018",
@@ -114,7 +114,7 @@ const objectGinfes = {
 		"codigoMunicipio": "3523909"
 	},
 	"emissor": {
-		"cnpj": "17845667000198",
+		"cnpj": "17845667000192",
 		"inscricaoMunicipal": "25099"
 	},
 	"rps": [{
@@ -143,7 +143,7 @@ const objectGinfes = {
 			"codigoMunicipio": "3523909"
 		},
 		"prestador": {
-			"cnpj": "17845667000198",
+			"cnpj": "17845667000192",
 			"inscricaoMunicipal": "25099"
 		},
 		"tomador": {
@@ -164,7 +164,7 @@ const objectGinfes = {
 			}
 		}
 	}]
-};
+}];
 
 const objectRio = {
 	"config": {
@@ -226,13 +226,7 @@ const objectRio = {
 	}]
 };
 
-let objectFiveThousand = [];
-
-for (let i = 0; i < 1; i++) {
-    objectFiveThousand.push(objectGinfes);
-}
-
-nodenf.postAndSearchLotInvoice('nfse', objectFiveThousand, 0)
+nodenf.postAndSearchLotInvoice('nfse', objectGinfes, 0)
 	.then(res => {
 		console.log(res);
 	})

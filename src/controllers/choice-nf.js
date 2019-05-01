@@ -30,7 +30,7 @@ const postLotInvoice = function (invoiceType, object, index) {
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
                         const result = {
                             message: `${object.length} lotes enviados`,
-                            result: resultArrayPostLotInvoice
+                            resultPostLotInvoice: resultArrayPostLotInvoice
                         }
                         
                         resolvePostLot(result);
@@ -86,7 +86,7 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                             } else {
                                 const result = {
                                     message: `${object.length} lotes enviados`,
-                                    result: webServiceResponse.body
+                                    resultPostLotInvoice: webServiceResponse.body
                                 }
                                 
                                 resolvePostAndSearch(result);

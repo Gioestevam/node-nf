@@ -166,7 +166,7 @@ const objectRio = {
 	}]
 };
 
-const objectGinfes = {
+const objectGinfes = [{
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-itu.pfx",
 		"senhaDoCertificado": "brmed2018",
@@ -224,15 +224,9 @@ const objectGinfes = {
 			}
 		}
 	}]
-};
+}];
 
-let objectFiveThousand = [];
-
-for (let i = 0; i < 1; i++) {
-    objectFiveThousand.push(objectGinfes);
-}
-
-nodenf.postLotInvoice('nfse', objectFiveThousand, 0)
+nodenf.postLotInvoice('nfse', objectGinfes, 0)
 	.then(res => {
 		console.log(res);
 	}).catch(err => {
