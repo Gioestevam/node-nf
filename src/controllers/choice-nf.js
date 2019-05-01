@@ -114,10 +114,10 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
                                         if ((newIndex - 1) < (object.length - 1)) {
-                                            resultArraySearchRpsLot.push(resolveSearchRpsLot);
+                                            resultArraySearchRpsLot.push(resolveSearchRpsLot.body);
                                             postAndSearchLotInvoice('nfse', object, newIndex);
                                         } else {
-                                            resultArraySearchRpsLot.push(resolveSearchRpsLot);
+                                            resultArraySearchRpsLot.push(resolveSearchRpsLot.body);
                                             
                                             const result = { 
                                                 message: `${object.length} lotes enviados`,
