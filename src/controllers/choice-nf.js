@@ -115,10 +115,10 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                                 searchRpsLot(invoiceType, objectToSearchRpsLot)
                                     .then(resolveSearchRpsLot => {
                                         if ((newIndex - 1) < (object.length - 1)) {
-                                            resultArraySearchRpsLot.push(resolveSearchRpsLot.body);
+                                            resultArraySearchRpsLot.push(resolveSearchRpsLot);
                                             postAndSearchLotInvoice('nfse', object, newIndex);
                                         } else {
-                                            resultArraySearchRpsLot.push(resolveSearchRpsLot.body);
+                                            resultArraySearchRpsLot.push(resolveSearchRpsLot);
                                             
                                             const result = { 
                                                 message: `${object.length} lotes enviados`,
@@ -191,7 +191,7 @@ const searchRpsLot = function (invoiceType, object) {
                                 }, 15000);
                             } else {
                                 console.log(mensagem);
-                                resolve(webServiceResponse);
+                                resolve(webServiceResponse.body);
                             }
                         } else if (invoiceType === 'nfse' && webServiceResponse.body.split('Codigo&gt;')[1]) {
                             let mensagem = 'sem mensagem';
