@@ -11,7 +11,9 @@ const fs = require('fs');
 const pem = require('pem');
 const validator = require('xsd-schema-validator');
 
+const d = new Date();
 const timestamp = Date.now();
+const numeroLote = timestamp.toString().substring(4,13) + (d.getYear() - 100);
 
 function createXml(object, action) {
     var url = '';
@@ -33,7 +35,7 @@ function createXml(object, action) {
                         }
                         let xml = '<EnviarLoteRpsEnvio  xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '" versao="1.00">';
-                        xml += '<NumeroLote>' + timestamp + '</NumeroLote>';
+                        xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
                         xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
                         xml += '<QuantidadeRps>' + object.rps.length + '</QuantidadeRps>';
@@ -155,7 +157,7 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<Aliquota>' + r.servico.aliquota + '</Aliquota>';
             xmlToBeSigned += '<ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ValorLiquidoNfse>';
             xmlToBeSigned += '</Valores>';
-            xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico + '</ItemListaServico>';
+            xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico.replace(/[^\d]+/g,'') + '</ItemListaServico>';
             xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
             xmlToBeSigned += '<Discriminacao>' + r.servico.discriminacao + '</Discriminacao>';
             xmlToBeSigned += '<CodigoMunicipio>' + r.servico.codigoMunicipio + '</CodigoMunicipio>';

@@ -497,7 +497,7 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<TributacaoRPS>T</TributacaoRPS>';            
             xmlToBeSigned += '<ValorServicos>' + r.servico.valorServicos + '</ValorServicos>';
             xmlToBeSigned += '<ValorDeducoes>' + r.servico.valorDeducoes + '</ValorDeducoes>';
-            xmlToBeSigned += '<CodigoServico>' + r.servico.itemListaServico + '</CodigoServico>';
+            xmlToBeSigned += '<CodigoServico>' + r.servico.itemListaServico.replace(/[^\d]+/g,'') + '</CodigoServico>';
             xmlToBeSigned += '<AliquotaServicos>' + r.servico.aliquota + '</AliquotaServicos>';
             xmlToBeSigned += '<ISSRetido>' + r.servico.issRetido + '</ISSRetido>';
             xmlToBeSigned += '<CPFCNPJTomador>';
