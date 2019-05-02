@@ -226,7 +226,7 @@ const objectGinfes = [{
 	}]
 }];
 
-nodenf.postLotInvoice('nfse', objectGinfes, 0)
+nodenf.postLotInvoice('nfse', objectRio, 0)
 	.then(res => {
 		console.log(res);
 	}).catch(err => {

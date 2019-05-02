@@ -137,8 +137,8 @@ const objectGinfes = [{
 			"baseCalculo": 105.00,
 			"aliquota": 0.0200,
 			"valorLiquidoNfse": 105.00,
-			"itemListaServico": "1009",
-			"codigoTributacaoMunicipio": "461840200",
+			"itemListaServico": "010102",
+			"codigoTributacaoMunicipio": "140520",
 			"discriminacao": "Ref. Servico Conforme O.S. Foi feito ajustes nas configuracoes do SITEF.;Foi feito a instalacao do PINPAD.;Foi feito testes de venda com cartao.",
 			"codigoMunicipio": "3523909"
 		},
@@ -147,8 +147,8 @@ const objectGinfes = [{
 			"inscricaoMunicipal": "25099"
 		},
 		"tomador": {
-			"cnpjCpf": "70523431000118",
-			"inscricaoMunicipal": "0743140200169",
+			"cnpjCpf": "17845667000192",
+			"inscricaoMunicipal": "25099",
 			"razaoSocial": "ALANA E JOSEFA CONSTRUCOES LTDA",
 			"endereco": {
 				"endereco": "Rua Manuel de Autoguia",
@@ -166,7 +166,7 @@ const objectGinfes = [{
 	}]
 }];
 
-const objectRio = {
+const objectRio = [{
 	"config": {
 		"diretorioDoCertificado": "/home/ofm/Downloads/pfx/client-rio-de-janeiro.pfx",
 		"senhaDoCertificado": "12345678",
@@ -185,7 +185,7 @@ const objectRio = {
 		"incentivadorCultural": "2",
 		"status": "1",
 		"servico": {
-			"valorServicos": 105.00,
+			"valorServicos": 100.00,
 			"valorDeducoes": 0.00,
 			"valorPis": 0.00,
 			"valorCofins": 0.00,
@@ -193,12 +193,12 @@ const objectRio = {
 			"valorIr": 0.00,
 			"valorCsll": 0.00,
 			"issRetido": 2,
-			"valorIss": 2.10,
+			"valorIss": 5.00,
 			"baseCalculo": 105.00,
-			"aliquota": 0.0200,
+			"aliquota": 0.05,
 			"valorLiquidoNfse": 105.00,
-			"itemListaServico": "1009",
-			"codigoTributacaoMunicipio": "461840200",
+			"itemListaServico": "1405",
+			"codigoTributacaoMunicipio": "140520",
 			"discriminacao": "Ref. Servico Conforme O.S. Foi feito ajustes nas configuracoes do SITEF.;Foi feito a instalacao do PINPAD.;Foi feito testes de venda com cartao.",
 			"codigoMunicipio": "3523909"
 		},
@@ -207,8 +207,8 @@ const objectRio = {
 			"inscricaoMunicipal": "04386965"
 		},
 		"tomador": {
-			"cnpjCpf": "70523431000118",
-			"inscricaoMunicipal": "0743140200169",
+			"cnpjCpf": "14797440000126",
+			"inscricaoMunicipal": "44857624",
 			"razaoSocial": "ALANA E JOSEFA CONSTRUCOES LTDA",
 			"endereco": {
 				"endereco": "Rua Manuel de Autoguia",
@@ -224,9 +224,9 @@ const objectRio = {
 			}
 		}
 	}]
-};
+}];
 
-nodenf.postAndSearchLotInvoice('nfse', objectGinfes, 0)
+nodenf.postAndSearchLotInvoice('nfse', objectRio, 0)
 	.then(res => {
 		console.log(res);
 	})
