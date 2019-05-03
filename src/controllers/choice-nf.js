@@ -5,6 +5,7 @@ const generate = require('./generate-nf'),
 
 let resultArrayPostLotInvoice = [];
 let resultArraySearchRpsLot = [];
+let requestArrayPostLotInvoice = [];
 
 const postLotInvoice = function (invoiceType, object, index) {
     resultArrayPostLotInvoice = [];
@@ -51,6 +52,7 @@ const postLotInvoice = function (invoiceType, object, index) {
 const postAndSearchLotInvoice = async function (invoiceType, object, index) {
     resultArrayPostLotInvoice = [];
     resultArraySearchRpsLot = [];
+    requestArrayPostLotInvoice = [];
 
     if (index === 0) {
         let message = '';
@@ -68,7 +70,8 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                     .then(webServiceResponse => {
                         let objectToSearchRpsLot = {};
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
-                        
+                        requestArrayPostLotInvoice.push(webServiceResponse.request.body);
+
                         if (webServiceResponse.body.split('ns3:Protocolo&gt;')[1]) {
                             objectToSearchRpsLot = {
                                 config: object[newIndex - 1].config,
@@ -123,7 +126,8 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
                                             const result = { 
                                                 message: `${object.length} lotes enviados`,
                                                 resultSearchRpsLot: resultArraySearchRpsLot,
-                                                resultPostLotInvoice: resultArrayPostLotInvoice
+                                                resultPostLotInvoice: resultArrayPostLotInvoice,
+                                                requestPostLotInvoice: requestArrayPostLotInvoice
                                             }
                                             console.log(result);
                                             resolvePostAndSearch(result);
