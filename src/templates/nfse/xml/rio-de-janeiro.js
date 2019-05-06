@@ -509,10 +509,10 @@ function addSignedXml(object, cert) {
             }
             xmlToBeSigned += '</Endereco>';
             xmlToBeSigned += '<Contato>';
-            if (r.tomador.contato.telefone) {
+            if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
                 xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
             }
-            if (r.tomador.contato.email) {
+            if (r.tomador.contato.email && r.tomador.contato.email != '') {
                 xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
             }
             xmlToBeSigned += '</Contato>';

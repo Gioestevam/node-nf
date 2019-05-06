@@ -455,8 +455,12 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<Cep>' + r.tomador.endereco.cep + '</Cep>';
             xmlToBeSigned += '</Endereco>';
             xmlToBeSigned += '<Contato>';
-            xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
-            xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
+            if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
+                xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
+            }
+            if (r.tomador.contato.email && r.tomador.contato.email != '') {
+                xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
+            }
             xmlToBeSigned += '</Contato>';
             xmlToBeSigned += '</Tomador>';
             xmlToBeSigned += '</InfRps>';

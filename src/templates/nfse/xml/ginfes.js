@@ -520,8 +520,12 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<ns4:Cep>' + r.tomador.endereco.cep + '</ns4:Cep>';
             xmlToBeSigned += '</ns4:Endereco>';
             xmlToBeSigned += '<ns4:Contato>';
-            xmlToBeSigned += '<ns4:Telefone>' + r.tomador.contato.telefone + '</ns4:Telefone>';
-            xmlToBeSigned += '<ns4:Email>' + r.tomador.contato.email + '</ns4:Email>';
+            if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
+                xmlToBeSigned += '<ns4:Telefone>' + r.tomador.contato.telefone + '</ns4:Telefone>';
+            }
+            if (r.tomador.contato.email && r.tomador.contato.email != '') {
+                xmlToBeSigned += '<ns4:Email>' + r.tomador.contato.email + '</ns4:Email>';
+            }
             xmlToBeSigned += '</ns4:Contato>';
             xmlToBeSigned += '</ns4:Tomador>';
             xmlToBeSigned += '</ns4:InfRps>';

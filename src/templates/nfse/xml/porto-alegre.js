@@ -39,7 +39,9 @@ function createXml(object, action) {
                             xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g, '') + timestamp + '" versao="1.00">';
                             xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
                             xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g, '') + '</Cnpj>';
-                            xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
+                            if (object.emissor.inscricaoMunicipal && object.emissor.inscricaoMunicipal != '') {
+                                xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
+                            }
                             xml += '<QuantidadeRps>' + object.rps.length + '</QuantidadeRps>';
                             xml += '<ListaRps>';
 
@@ -113,7 +115,9 @@ function createXml(object, action) {
                             xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g, '') + timestamp + '" versao="1.00">';
                             xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
                             xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g, '') + '</Cnpj>';
-                            xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
+                            if (object.emissor.inscricaoMunicipal && object.emissor.inscricaoMunicipal != '') {
+                                xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
+                            }
                             xml += '<QuantidadeRps>' + object.rps.length + '</QuantidadeRps>';
                             xml += '<ListaRps>';
 
@@ -558,10 +562,10 @@ function addSignedXml(object, cert) {
             }
             xmlToBeSigned += '</Endereco>';
             xmlToBeSigned += '<Contato>';
-            if (r.tomador.contato.telefone) {
+            if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
                 xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
             }
-            if (r.tomador.contato.email) {
+            if (r.tomador.contato.email && r.tomador.contato.email != '') {
                 xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
             }
             xmlToBeSigned += '</Contato>';
