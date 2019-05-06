@@ -182,7 +182,7 @@ const searchRpsLot = function (invoiceType, object) {
                             }
                             const codigo = webServiceResponse.body.split('ns4:Codigo&gt;')[1].split('&lt;/ns4:Codigo')[0].replace('&lt;/', '');
 
-                            if (codigo === 'E4' || codigo === 'A02') {
+                            if (codigo === 'E4' || codigo === 'A02' || codigo === 'E180') {
                                 console.log(mensagem);
                                 setTimeout(() => {
                                     searchRpsLot(invoiceType, object)
@@ -205,7 +205,7 @@ const searchRpsLot = function (invoiceType, object) {
                             }
                             const codigo = responseBody.split('Codigo&gt;')[1].split('&lt;/Codigo')[0].replace('&lt;/', '');
 
-                            if (codigo === 'E4' || codigo === 'A02') {
+                            if (codigo === 'E4' || codigo === 'A02' || codigo === 'E180') {
                                 console.log(mensagem);
 
                                 setTimeout(() => {
