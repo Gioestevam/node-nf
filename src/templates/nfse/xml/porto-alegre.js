@@ -17,7 +17,7 @@ const numeroLote = timestamp.toString().substring(4, 13) + (d.getYear() - 100);
 
 function createXml(object, action) {
     var url = '';
-    object.config.producaoHomologacao === 'producao' ? url = 'http://nfe.portoalegre.rs.gov.br/nfe-ws?wsdl' : url = 'https://nfse-hom.procempa.com.br/bhiss-ws/nfse?wsdl';
+    object.config.producaoHomologacao === 'producao' ? url = 'https://nfe.portoalegre.rs.gov.br/bhiss-ws/nfse?wsdl' : url = 'https://nfse-hom.procempa.com.br/bhiss-ws/nfse?wsdl';
 
     return new Promise((resolve, reject) => {
         const pfx = fs.readFileSync(object.config.diretorioDoCertificado);
