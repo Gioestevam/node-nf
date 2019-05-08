@@ -11,7 +11,9 @@ const fs = require('fs');
 const pem = require('pem');
 const validator = require('xsd-schema-validator');
 
+const d = new Date();
 const timestamp = Date.now();
+const numeroLote = timestamp.toString().substring(4,13) + (d.getYear() - 100);
 
 function createXml(object, action) {
     var url = '';
@@ -266,7 +268,7 @@ function createXml(object, action) {
 
                         let xml = '<ns3:ConsultarNfseRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_rps_envio_v03.xsd" xmlns:ns4="http://www.prefeitura.sp.gov.br/nfe/tipos">';
                         xml += '<ns3:IdentificacaoRps>';
-                        xml += '<ns4:Numero>' + object.identificacaoRps.numero + '</ns4:Numero>';
+                        xml += '<ns4:Numero>' + numeroLote + '</ns4:Numero>';
                         xml += '<ns4:Serie>' + object.identificacaoRps.serie + '</ns4:Serie>';
                         xml += '<ns4:Tipo>' + object.identificacaoRps.tipo + '</ns4:Tipo>';
                         xml += '</ns3:IdentificacaoRps>';
@@ -489,7 +491,7 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<ChaveRPS>';
             xmlToBeSigned += '<InscricaoPrestador>' + prestadorIncricaoMunicipal + '</InscricaoPrestador>';
             xmlToBeSigned += '<SerieRPS>RPS</SerieRPS>';
-            xmlToBeSigned += '<NumeroRPS>' + timestamp + index + '</NumeroRPS>';
+            xmlToBeSigned += '<NumeroRPS>' + numeroLote + index + '</NumeroRPS>';
             xmlToBeSigned += '</ChaveRPS>';
             xmlToBeSigned += '<TipoRPS>' + r.tipo + '</TipoRPS>';
             xmlToBeSigned += '<DataEmissao>' + r.dataEmissao.replace(/\s/g, 'T') + '</DataEmissao>';
