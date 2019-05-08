@@ -18,7 +18,7 @@ const numeroLote = timestamp.toString().substring(4,13) + (d.getYear() - 100);
 function createXml(object, action) {
     var url = '';
     object.config.producaoHomologacao === 'producao' ? url = 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' : url = 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl';
-    object.config.producaoHomologacao === 'producao' ? url = 'http://producao.ginfes.com.br' : urlXmlns = 'http://homologacao.ginfes.com.br';
+    object.config.producaoHomologacao === 'producao' ? urlXmlns = 'http://producao.ginfes.com.br' : urlXmlns = 'http://homologacao.ginfes.com.br';
 
     return new Promise((resolve, reject) => {
 
