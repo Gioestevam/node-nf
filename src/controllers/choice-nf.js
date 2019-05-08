@@ -25,9 +25,11 @@ const postLotInvoice = function (invoiceType, object, index) {
             webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                 .then(webServiceResponse => {
                     if ((newIndex - 1) < (object.length - 1)) {
+                        resultArrayPostLotInvoice = [];
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
                         postLotInvoice('nfse', object, newIndex);
                     } else {
+                        resultArrayPostLotInvoice = [];
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
                         const result = {
                             message: `${object.length} lotes enviados`,
@@ -68,6 +70,7 @@ const postAndSearchLotInvoice = async function (invoiceType, object, index) {
             .then(postLotInvoiceResponse => {
                 webServiceRequest(postLotInvoiceResponse.soapEnvelop, postLotInvoiceResponse.url, postLotInvoiceResponse.soapAction, object[newIndex - 1].config.diretorioDoCertificado, object[newIndex - 1].config.senhaDoCertificado)
                     .then(webServiceResponse => {
+                        resultArrayPostLotInvoice = [];
                         let objectToSearchRpsLot = {};
                         resultArrayPostLotInvoice.push(webServiceResponse.body);
                         requestArrayPostLotInvoice.push(webServiceResponse.request.body);

@@ -485,7 +485,7 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cpf>';
             }
             xmlToBeSigned += '</CpfCnpj>';
-            if (r.tomador.inscricaoMunicipal) {
+            if (r.tomador.inscricaoMunicipal || r.tomador.inscricaoMunicipal != '') {
                 xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
             }
             xmlToBeSigned += '</IdentificacaoTomador>';

@@ -178,7 +178,9 @@ function createXml(object, action) {
                         let xml = '<ns3:ConsultarLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {                            
+                            xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        }
                         xml += '</ns3:Prestador>';
                         xml += '<ns3:Protocolo>' + object.protocolo + '</ns3:Protocolo>';
                         xml += '</ns3:ConsultarLoteRpsEnvio>';
@@ -248,7 +250,9 @@ function createXml(object, action) {
                         xml += '</ns3:IdentificacaoRps>';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {
+                            xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        }
                         xml += '</ns3:Prestador>';
                         xml += '</ns3:ConsultarNfseRpsEnvio>';
 
@@ -311,7 +315,9 @@ function createXml(object, action) {
                         let xml = '<ns3:ConsultarSituacaoLoteRpsEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_situacao_lote_rps_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {                            
+                            xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        }
                         xml += '</ns3:Prestador>';
                         xml += '<ns3:Protocolo>' + object.protocolo + '</ns3:Protocolo>';
                         xml += '</ns3:ConsultarSituacaoLoteRpsEnvio>';
@@ -376,7 +382,9 @@ function createXml(object, action) {
                         let xml = '<ns3:ConsultarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_consultar_nfse_envio_v03.xsd" xmlns:ns4="http://www.ginfes.com.br/tipos_v03.xsd">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {                            
+                            xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        }
                         xml += '</ns3:Prestador>';
                         xml += '<ns3:PeriodoEmissao>';
                         xml += '<ns3:DataInicial>' + object.periodoEmissao.dataInicial + '</ns4:DataInicial>';
@@ -519,7 +527,9 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<ns4:Cpf>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</ns4:Cpf>';
             }
             xmlToBeSigned += '</ns4:CpfCnpj>';
-            xmlToBeSigned += '<ns4:InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+            if (r.tomador.inscricaoMunicipal || r.tomador.inscricaoMunicipal != '') {
+                xmlToBeSigned += '<ns4:InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+            }
             xmlToBeSigned += '</ns4:IdentificacaoTomador>';
             xmlToBeSigned += '<ns4:RazaoSocial>' + r.tomador.razaoSocial + '</ns4:RazaoSocial>';
             xmlToBeSigned += '<ns4:Endereco>';
