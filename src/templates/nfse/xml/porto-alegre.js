@@ -516,8 +516,8 @@ function addSignedXml(object, cert) {
                 xmlToBeSigned += '<DescontoCondicionado>' + r.servico.descontoCondicionado + '</DescontoCondicionado>';
             }
             xmlToBeSigned += '</Valores>';
-            xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico.replace(/[^\d]+/g,'') + '</ItemListaServico>';
-            xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio + '</CodigoTributacaoMunicipio>';
+            xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico + '</ItemListaServico>';
+            xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio.replace(/[^\d]+/g,'') + '</CodigoTributacaoMunicipio>';
             xmlToBeSigned += '<Discriminacao>' + r.servico.discriminacao + '</Discriminacao>';
             xmlToBeSigned += '<CodigoMunicipio>' + r.servico.codigoMunicipio + '</CodigoMunicipio>';
             xmlToBeSigned += '</Servico>';

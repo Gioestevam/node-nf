@@ -491,7 +491,7 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '</ns4:Valores>';
             xmlToBeSigned += '<ns4:ItemListaServico>' + r.servico.itemListaServico.replace(/[^\d]+/g,'') + '</ns4:ItemListaServico>';
             if (r.servico.codigoTributacaoMunicipio) {
-                xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio + '</ns4:CodigoTributacaoMunicipio>';
+                xmlToBeSigned += '<ns4:CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio.replace(/[^\d]+/g,'') + '</ns4:CodigoTributacaoMunicipio>';
             }
             xmlToBeSigned += '<ns4:Discriminacao>' + r.servico.discriminacao + '</ns4:Discriminacao>';
             xmlToBeSigned += '<ns4:CodigoMunicipio>' + r.servico.codigoMunicipio + '</ns4:CodigoMunicipio>';
