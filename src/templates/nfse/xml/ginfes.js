@@ -18,7 +18,7 @@ const numeroLote = timestamp.toString().substring(4,13) + (d.getYear() - 100);
 function createXml(object, action) {
     var url = '';
     object.config.producaoHomologacao === 'producao' ? url = 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' : url = 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl';
-
+    object.config.producaoHomologacao === 'producao' ? urlXmlns = 'https://producao.ginfes.com.br' : url = 'https://homologacao.ginfes.com.br';
     return new Promise((resolve, reject) => {
         console.log(action);
         switch (action) {
@@ -68,7 +68,7 @@ function createXml(object, action) {
 
                                         let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                         xml += '<soap:Body>';
-                                        xml += '<ns1:RecepcionarLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                        xml += '<ns1:RecepcionarLoteRpsV3 xmlns:ns1="' + urlXmlns + '">';
                                         xml += '<arg0>';
                                         xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                         xml += '<versaoDados>3</versaoDados>';
@@ -136,7 +136,7 @@ function createXml(object, action) {
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Header/>';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:CancelarNfse xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:CancelarNfse xmlns:ns1="' + urlXmlns + '">';
                                 xml += '<arg0>';
                                 xml += xmlSignature;
                                 xml += '</arg0>';
@@ -196,7 +196,7 @@ function createXml(object, action) {
 
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:ConsultarLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:ConsultarLoteRpsV3 xmlns:ns1="' + urlXmlns + '">';
                                 xml += '<arg0>';
                                 xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                 xml += '<versaoDados>3</versaoDados>';
@@ -265,7 +265,7 @@ function createXml(object, action) {
 
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:ConsultarNfsePorRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:ConsultarNfsePorRpsV3 xmlns:ns1="' + urlXmlns + '">';
                                 xml += '<arg0>';
                                 xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                 xml += '<versaoDados>3</versaoDados>';
@@ -329,7 +329,7 @@ function createXml(object, action) {
 
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:ConsultarSituacaoLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:ConsultarSituacaoLoteRpsV3 xmlns:ns1="' + urlXmlns + '">';
                                 xml += '<arg0>';
                                 xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                 xml += '<versaoDados>3</versaoDados>';
@@ -408,7 +408,7 @@ function createXml(object, action) {
 
                                 let xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
                                 xml += '<soap:Body>';
-                                xml += '<ns1:ConsultarSituacaoLoteRpsV3 xmlns:ns1="http://homologacao.ginfes.com.br">';
+                                xml += '<ns1:ConsultarSituacaoLoteRpsV3 xmlns:ns1="' + urlXmlns + '">';
                                 xml += '<arg0>';
                                 xml += '<ns2:cabecalho versao="3" xmlns:ns2="http://www.ginfes.com.br/cabecalho_v03.xsd">';
                                 xml += '<versaoDados>3</versaoDados>';
@@ -461,11 +461,15 @@ function addSignedXml(object, cert) {
                 prestadorIncricaoMunicipal = r.prestador.inscricaoMunicipal;
             }
             xmlToBeSigned += '<ns4:Rps>';
-            xmlToBeSigned += '<ns4:InfRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + 'RPS' + index + '">';
+            if (object.emissor.cnpj || object.emissor.cnpj != '') {
+                xmlToBeSigned += '<ns4:InfRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + 'RPS' + index + '">';
+            }
             xmlToBeSigned += '<ns4:IdentificacaoRps>';
             xmlToBeSigned += '<ns4:Numero>' + timestamp + index + '</ns4:Numero>';
             xmlToBeSigned += '<ns4:Serie>RPS</ns4:Serie>';
-            xmlToBeSigned += '<ns4:Tipo>' + r.tipo + '</ns4:Tipo>';
+            if (object.emissor.cnpj || object.emissor.cnpj != '') {
+                xmlToBeSigned += '<ns4:Tipo>' + r.tipo + '</ns4:Tipo>';
+            }
             xmlToBeSigned += '</ns4:IdentificacaoRps>';
             xmlToBeSigned += '<ns4:DataEmissao>' + r.dataEmissao.replace(/\s/g, 'T') + '</ns4:DataEmissao>';
             xmlToBeSigned += '<ns4:NaturezaOperacao>' + r.naturezaOperacao + '</ns4:NaturezaOperacao>';
@@ -501,7 +505,9 @@ function addSignedXml(object, cert) {
 
             xmlToBeSigned += '<ns4:Prestador>';
             xmlToBeSigned += '<ns4:Cnpj>' + prestadorCnpj.replace(/[^\d]+/g,'') +'</ns4:Cnpj>';
-            xmlToBeSigned += '<ns4:InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</ns4:InscricaoMunicipal>';
+            if (prestadorIncricaoMunicipal || prestadorIncricaoMunicipal != '') {
+                xmlToBeSigned += '<ns4:InscricaoMunicipal>' + prestadorIncricaoMunicipal + '</ns4:InscricaoMunicipal>';
+            }
             xmlToBeSigned += '</ns4:Prestador>';
             xmlToBeSigned += '<ns4:Tomador>';
             xmlToBeSigned += '<ns4:IdentificacaoTomador>';
