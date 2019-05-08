@@ -39,7 +39,9 @@ function createXml(object, action) {
                         xml += '<ns3:LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '">';
                         xml += '<ns4:NumeroLote>' + numeroLote + '</ns4:NumeroLote>';
                         xml += '<ns4:Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g,'') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        if (object.emissor.inscricaoMunicipal && object.emissor.inscricaoMunicipal != '') {
+                            xml += '<ns4:InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        }
                         xml += '<ns4:QuantidadeRps>' + object.rps.length + '</ns4:QuantidadeRps>';
                         xml += '<ns4:ListaRps>';
 
@@ -112,7 +114,9 @@ function createXml(object, action) {
                         let xml = '<ns3:CancelarNfseEnvio xmlns:ns3="http://www.ginfes.com.br/servico_cancelar_nfse_envio" xmlns:ns4="http://www.ginfes.com.br/tipos">';
                         xml += '<ns3:Prestador>';
                         xml += '<ns4:Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</ns4:Cnpj>';
-                        xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {
+                            xml += '<ns4:InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</ns4:InscricaoMunicipal>';
+                        }
                         xml += '</ns3:Prestador>';
                         xml += '<ns3:NumeroNfse>' + object.numeroNfse + '</ns3:NumeroNfse>';
                         xml += '</ns3:CancelarNfseEnvio>';
@@ -520,12 +524,12 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<ns4:Cep>' + r.tomador.endereco.cep + '</ns4:Cep>';
             xmlToBeSigned += '</ns4:Endereco>';
             xmlToBeSigned += '<ns4:Contato>';
-            // if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
-            //     xmlToBeSigned += '<ns4:Telefone>' + r.tomador.contato.telefone + '</ns4:Telefone>';
-            // }
-            // if (r.tomador.contato.email && r.tomador.contato.email != '') {
-            //     xmlToBeSigned += '<ns4:Email>' + r.tomador.contato.email + '</ns4:Email>';
-            // }
+            if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
+                xmlToBeSigned += '<ns4:Telefone>' + r.tomador.contato.telefone + '</ns4:Telefone>';
+            }
+            if (r.tomador.contato.email && r.tomador.contato.email != '') {
+                xmlToBeSigned += '<ns4:Email>' + r.tomador.contato.email + '</ns4:Email>';
+            }
             xmlToBeSigned += '</ns4:Contato>';
             xmlToBeSigned += '</ns4:Tomador>';
             xmlToBeSigned += '</ns4:InfRps>';

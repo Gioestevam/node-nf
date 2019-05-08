@@ -260,14 +260,16 @@ function createXml(object, action) {
                 case 'cancelInvoice':
                     try {
                         let xml = '<Pedido xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
-                        xml += '<InfPedidoCancelamento Id="Cancelamento_NF' + object.infPedidoCancelamento.identificacaoNfse.numero + '">';
+                        xml += '<InfPedidoCancelamento Id="Cancelamento_NF' + object.numeroNfse + '">';
                         xml += '<IdentificacaoNfse>';
-                        xml += '<Numero>' + object.infPedidoCancelamento.identificacaoNfse.numero + '</Numero>';
-                        xml += '<Cnpj>' + object.infPedidoCancelamento.identificacaoNfse.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
-                        xml += '<InscricaoMunicipal>' + object.infPedidoCancelamento.identificacaoNfse.inscricaoMunicipal + '</InscricaoMunicipal>';
-                        xml += '<CodigoMunicipio>' + object.infPedidoCancelamento.identificacaoNfse.codigoMunicipio + '</CodigoMunicipio>';
+                        xml += '<Numero>' + object.numeroNfse + '</Numero>';
+                        xml += '<Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
+                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {
+                            xml += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        }
+                        xml += '<CodigoMunicipio>' + object.config.codigoMunicipio + '</CodigoMunicipio>';
                         xml += '</IdentificacaoNfse>';
-                        xml += '<CodigoCancelamento>' + object.infPedidoCancelamento.codigoCancelamento + '</CodigoCancelamento>';
+                        xml += '<CodigoCancelamento>' + object.codigoCancelamento + '</CodigoCancelamento>';
                         xml += '</InfPedidoCancelamento>';
                         xml += '</Pedido>';
 
@@ -509,12 +511,12 @@ function addSignedXml(object, cert) {
             }
             xmlToBeSigned += '</Endereco>';
             xmlToBeSigned += '<Contato>';
-            // if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
-            //     xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
-            // }
-            // if (r.tomador.contato.email && r.tomador.contato.email != '') {
-            //     xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
-            // }
+            if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {
+                xmlToBeSigned += '<Telefone>' + r.tomador.contato.telefone + '</Telefone>';
+            }
+            if (r.tomador.contato.email && r.tomador.contato.email != '') {
+                xmlToBeSigned += '<Email>' + r.tomador.contato.email + '</Email>';
+            }
             xmlToBeSigned += '</Contato>';
             xmlToBeSigned += '</Tomador>';
             xmlToBeSigned += '</InfRps>';

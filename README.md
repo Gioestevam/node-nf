@@ -127,7 +127,8 @@ const objectGinfes = [{
 		"cnpj": "00000001000000",
         "inscricaoMunicipal": "200000"
 	},
-	"numeroNfse": 214
+	"numeroNfse": 214,
+	"codigoCancelamento": 0
 }];
 
 nf.cancelInvoice('nfse', objectGinfes)
