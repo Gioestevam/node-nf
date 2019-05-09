@@ -398,6 +398,11 @@ function createXml(object, action) {
                             xml += '<soapenv:Header/>';
                             xml += '<soapenv:Body>';
                             xml += '<not:CancelarNfseRequest>';
+                            xml += '<nfseCabecMsg>';
+                            xml += '<![CDATA[<cabecalho xmlns="http://www.abrasf.org.br/nfse.xsd" versao="1.00">';
+                            xml += '<versaoDados>1.00</versaoDados>';
+                            xml += '</cabecalho>]]>';
+                            xml += '</nfseCabecMsg>';
                             xml += '<nfseDadosMsg>';
                             xml += '<![CDATA[';
                             xml += '<CancelarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">'
