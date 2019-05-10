@@ -34,7 +34,7 @@ function createXml(object, action) {
                 case 'postLotInvoice':
                     try {
 
-                        let xml = '<EnviarLoteRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        let xml = '<EnviarLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '">';
                         xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
                         xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
@@ -52,33 +52,37 @@ function createXml(object, action) {
                                 xml += '</EnviarLoteRpsEnvio>';
 
                                 createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
-                                    validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/rio-de-janeiro/tipos_nfse_v01.xsd', function (err, validatorResult) {
-                                        if (err) {
-                                            console.log(err);
-                                            resolve(err);
-                                        }
+                                    // validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/rio-de-janeiro/tipos_nfse_v01.xsd', function (err, validatorResult) {
+                                    //     if (err) {
+                                    //         console.log(err);
+                                    //         resolve(err);
+                                    //     }
 
-                                        if (!validatorResult.valid) {
-                                            console.log(validatorResult);
-                                            resolve(validatorResult);
-                                        }
-                                    });
+                                    //     if (!validatorResult.valid) {
+                                    //         console.log(validatorResult);
+                                    //         resolve(validatorResult);
+                                    //     }
+                                    // });
 
-                                    let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://services.nfse">';
-                                    xml += '<soapenv:Header/>';
+                                    let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';                                    xml += '<soapenv:Header/>';
                                     xml += '<soapenv:Body>';
-                                    xml += '<not:RecepcionarLoteRpsRequest>';
+                                    xml += '<ser:RecepcionarLoteRpsRequest>';
+                                    xml += '<nfseCabecMsg>';
+                                    xml += '<![CDATA[<cabecalho xmlns="http://www.abrasf.org.br/nfse.xsd" versao="1.00">';
+                                    xml += '<versaoDados>1.00</versaoDados>';
+                                    xml += '</cabecalho>]]>';
+                                    xml += '</nfseCabecMsg>';
                                     xml += '<nfseDadosMsg>';
                                     xml += '<![CDATA[' + xmlSignature + ']]>';
                                     xml += '</nfseDadosMsg>';
-                                    xml += '</not:RecepcionarLoteRpsRequest>';
+                                    xml += '</ser:RecepcionarLoteRpsRequest>';
                                     xml += '</soapenv:Body>';
-                                    xml += '</soapenv:Envelope>';
+                                    xml += '</soapenv:Envelope>'; console.log(xml);
 
                                     const result = {
                                         url: url,
                                         soapEnvelop: xml,
-                                        soapAction: 'http://notacarioca.rio.gov.br/RecepcionarLoteRps'
+                                        soapAction: 'http://services.nfse/RecepcionarLoteRps'
                                     }
 
                                     resolve(result);
@@ -94,7 +98,7 @@ function createXml(object, action) {
 
                 case 'searchSituation':
                     try {
-                        let xmlContent = '<ConsultarSituacaoLoteRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        let xmlContent = '<ConsultarSituacaoLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<Prestador>';
                         xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
@@ -102,7 +106,7 @@ function createXml(object, action) {
                         xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
                         xmlContent += '</ConsultarSituacaoLoteRpsEnvio>';
 
-                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                         xml += '<soapenv:Header/>';
                         xml += '<soapenv:Body>';
                         xml += '<not:ConsultarSituacaoLoteRpsRequest>';
@@ -116,7 +120,7 @@ function createXml(object, action) {
                         const result = {
                             url: url,
                             soapEnvelop: xml,
-                            soapAction: 'http://notacarioca.rio.gov.br/ConsultarSituacaoLoteRps'
+                            soapAction: 'http://services.nfse/ConsultarSituacaoLoteRps'
                         }
 
                         resolve(result);
@@ -128,7 +132,7 @@ function createXml(object, action) {
 
                 case 'searchRpsLot':
                     try {
-                        let xmlContent = '<ConsultarLoteRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        let xmlContent = '<ConsultarLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<Prestador>';
                         xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
@@ -136,33 +140,38 @@ function createXml(object, action) {
                         xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
                         xmlContent += '</ConsultarLoteRpsEnvio>';
 
-                        validator.validateXML(xmlContent, __dirname + '/../../../../resources/xsd/rio-de-janeiro/tipos_nfse_v01.xsd', function (err, validatorResult) {
-                            if (err) {
-                                console.log(err);
-                                resolve(err);
-                            }
+                        // validator.validateXML(xmlContent, __dirname + '/../../../../resources/xsd/rio-de-janeiro/tipos_nfse_v01.xsd', function (err, validatorResult) {
+                        //     if (err) {
+                        //         console.log(err);
+                        //         resolve(err);
+                        //     }
 
-                            if (!validatorResult.valid) {
-                                console.log(validatorResult);
-                                resolve(validatorResult);
-                            }
-                        });
+                        //     if (!validatorResult.valid) {
+                        //         console.log(validatorResult);
+                        //         resolve(validatorResult);
+                        //     }
+                        // });
 
-                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                         xml += '<soapenv:Header/>';
                         xml += '<soapenv:Body>';
-                        xml += '<not:ConsultarLoteRpsRequest>';
-                        xml += '<not:inputXML>';
+                        xml += '<ser:ConsultarLoteRpsRequest>';
+                        xml += '<nfseCabecMsg>';
+                        xml += '<![CDATA[<cabecalho xmlns="http://www.abrasf.org.br/nfse.xsd" versao="1.00">';
+                        xml += '<versaoDados>1.00</versaoDados>';
+                        xml += '</cabecalho>]]>';
+                        xml += '</nfseCabecMsg>';
+                        xml += '<nfseDadosMsg>';
                         xml += '<![CDATA[' + xmlContent + ']]>';
-                        xml += '</not:inputXML>';
-                        xml += '</not:ConsultarLoteRpsRequest>';
+                        xml += '</nfseDadosMsg>';
+                        xml += '</ser:ConsultarLoteRpsRequest>';
                         xml += '</soapenv:Body>';
                         xml += '</soapenv:Envelope>';
 
                         const result = {
                             url: url,
                             soapEnvelop: xml,
-                            soapAction: 'http://notacarioca.rio.gov.br/ConsultarLoteRps'
+                            soapAction: 'http://services.nfse/ConsultarLoteRps'
                         }
 
                         resolve(result);
@@ -174,7 +183,7 @@ function createXml(object, action) {
 
                 case 'searchNfseByRps':
                     try {
-                        let xmlContent = '<ConsultarNfseRpsEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        let xmlContent = '<ConsultarNfseRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<IdentificacaoRps>';
                         xmlContent += '<Numero>' + object.identificacaoRps.numero + '</Numero>';
                         xmlContent += '<Serie>' + object.identificacaoRps.serie + '</Serie>';
@@ -186,7 +195,7 @@ function createXml(object, action) {
                         xmlContent += '</Prestador>';
                         xmlContent += '</ConsultarNfseRpsEnvio>';
 
-                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                         xml += '<soapenv:Header/>';
                         xml += '<soapenv:Body>';
                         xml += '<not:ConsultarNfsePorRpsRequest>';
@@ -200,7 +209,7 @@ function createXml(object, action) {
                         const result = {
                             url: url,
                             soapEnvelop: xml,
-                            soapAction: 'http://notacarioca.rio.gov.br/ConsultarNfsePorRps'
+                            soapAction: 'http://services.nfse/ConsultarNfsePorRps'
                         }
 
                         resolve(result);
@@ -212,7 +221,7 @@ function createXml(object, action) {
 
                 case 'searchInvoice':
                     try {
-                        let xmlContent = '<ConsultarNfseEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        let xmlContent = '<ConsultarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<Prestador>';
                         xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
@@ -233,7 +242,7 @@ function createXml(object, action) {
                         xmlContent += '</Tomador>';
                         xmlContent += '</ConsultarNfseEnvio>';
 
-                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                        let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                         xml += '<soapenv:Header/>';
                         xml += '<soapenv:Body>';
                         xml += '<not:ConsultarNfseRequest>';
@@ -247,7 +256,7 @@ function createXml(object, action) {
                         const result = {
                             url: url,
                             soapEnvelop: xml,
-                            soapAction: 'http://notacarioca.rio.gov.br/ConsultarNfse'
+                            soapAction: 'http://services.nfse/ConsultarNfse'
                         }
 
                         resolve(result);
@@ -259,7 +268,7 @@ function createXml(object, action) {
 
                 case 'cancelInvoice':
                     try {
-                        let xml = '<Pedido xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">';
+                        let xml = '<Pedido xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xml += '<InfPedidoCancelamento Id="Cancelamento_NF' + object.numeroNfse + '">';
                         xml += '<IdentificacaoNfse>';
                         xml += '<Numero>' + object.numeroNfse + '</Numero>';
@@ -288,13 +297,13 @@ function createXml(object, action) {
                             //     }
                             // });
 
-                            let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                            let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                             xml += '<soapenv:Header/>';
                             xml += '<soapenv:Body>';
                             xml += '<not:CancelarNfseRequest>';
                             xml += '<not:inputXML>';
                             xml += '<![CDATA[';
-                            xml += '<CancelarNfseEnvio xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd">'
+                            xml += '<CancelarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">'
                             xml += xmlSignature;
                             xml += '</CancelarNfseEnvio>'
                             xml += ']]>';
@@ -308,7 +317,7 @@ function createXml(object, action) {
                             const result = {
                                 url: url,
                                 soapEnvelop: xml,
-                                soapAction: 'http://notacarioca.rio.gov.br/CancelarNfse'
+                                soapAction: 'http://services.nfse/CancelarNfse'
                             }
 
                             resolve(result);
@@ -324,7 +333,7 @@ function createXml(object, action) {
                 case 'postInvoice':
                     try {
 
-                        let xmlContent = '<GerarNfseEnvio xmlns="http://notacarioca.rio.gov.br/WSNacional/XSD/1/nfse_pcrj_v01.xsd">';
+                        let xmlContent = '<GerarNfseEnvio xmlns="http://services.nfse/WSNacional/XSD/1/nfse_pcrj_v01.xsd">';
 
                         addSignedXml(object, cert)
                             .then(signedXmlRes => {
@@ -347,7 +356,7 @@ function createXml(object, action) {
                                 //     }
                                 // });
 
-                                let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:not="http://notacarioca.rio.gov.br/">';
+                                let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                                 xml += '<soapenv:Header/>';
                                 xml += '<soapenv:Body>';
                                 xml += '<not:GerarNfseRequest>';
@@ -361,7 +370,7 @@ function createXml(object, action) {
                                 const result = {
                                     url: url,
                                     soapEnvelop: xml,
-                                    soapAction: 'http://notacarioca.rio.gov.br/GerarNfse'
+                                    soapAction: 'http://services.nfse/GerarNfse'
                                 }
 
                                 resolve(result);
@@ -398,7 +407,7 @@ function addSignedXml(object, cert) {
                 prestadorIncricaoMunicipal = r.prestador.inscricaoMunicipal;
             }
             xmlToBeSigned += '<Rps>';
-            xmlToBeSigned += '<InfRps xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd" Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + 'RPS' + index + '">';
+            xmlToBeSigned += '<InfRps xmlns="http://www.abrasf.org.br/nfse.xsd" Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + 'RPS' + index + '">';
             xmlToBeSigned += '<IdentificacaoRps>';
             xmlToBeSigned += '<Numero>' + timestamp + index + '</Numero>';
             xmlToBeSigned += '<Serie>RPS</Serie>';
