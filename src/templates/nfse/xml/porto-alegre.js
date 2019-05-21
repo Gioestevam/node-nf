@@ -38,7 +38,14 @@ function createXml(object, action) {
                             let xml = '<EnviarLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                             xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g, '') + timestamp + '" versao="1.00">';
                             xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
-                            xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g, '') + '</Cnpj>';
+                            xmlContent += '<CpfCnpj>';
+                            if (object.tomador.cpfCnpj.length === 11) {
+                                xmlContent += '<Cpf>' + object.tomador.cpfCnpj + '</Cpf>';
+                            }
+                            if (object.tomador.cpfCnpj.length === 14) {
+                                xmlContent += '<Cnpj>' + object.tomador.cpfCnpj + '</Cnpj>';
+                            }
+                            xmlContent += '</CpfCnpj>';
                             if (object.emissor.inscricaoMunicipal && object.emissor.inscricaoMunicipal != '') {
                                 xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
                             }

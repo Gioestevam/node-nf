@@ -33,12 +33,13 @@ function createXml(object, action) {
             switch (action) {
                 case 'postLotInvoice':
                     try {
-
                         let xml = '<EnviarLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '">';
                         xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
                         xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
-                        xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        if (object.emissor.inscricaoMunicipal && object.emissor.inscricaoMunicipal.trim() != '') {
+                            xml += '<InscricaoMunicipal>' + object.emissor.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        }
                         xml += '<QuantidadeRps>' + object.rps.length + '</QuantidadeRps>';
                         xml += '<ListaRps>';
 
@@ -52,17 +53,17 @@ function createXml(object, action) {
                                 xml += '</EnviarLoteRpsEnvio>';
 
                                 createSignature(xml, cert, 'LoteRps').then(xmlSignature => {
-                                    // validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/rio-de-janeiro/tipos_nfse_v01.xsd', function (err, validatorResult) {
-                                    //     if (err) {
-                                    //         console.log(err);
-                                    //         resolve(err);
-                                    //     }
+                                    validator.validateXML(xmlSignature, __dirname + '/../../../../resources/xsd/catalao/nfse_v2_01.xsd', function (err, validatorResult) {
+                                        if (err) {
+                                            console.log(err);
+                                            resolve(err);
+                                        }
 
-                                    //     if (!validatorResult.valid) {
-                                    //         console.log(validatorResult);
-                                    //         resolve(validatorResult);
-                                    //     }
-                                    // });
+                                        if (!validatorResult.valid) {
+                                            console.log(validatorResult);
+                                            resolve(validatorResult);
+                                        }
+                                    });
 
                                     let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';                                    xml += '<soapenv:Header/>';
                                     xml += '<soapenv:Body>';
@@ -100,10 +101,16 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarSituacaoLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
-                        xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        if (object.prestador.cnpj && object.prestador.cnpj.trim() != '') {
+                            xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
+                        }
+                        if (object.prestador.inscricaoMunicipal && object.prestador.inscricaoMunicipal.trim() != '') {
+                            xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        }
                         xmlContent += '</Prestador>';
-                        xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
+                        if (object.protocolo && object.protocolo.trim() != '') {
+                            xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
+                        }
                         xmlContent += '</ConsultarSituacaoLoteRpsEnvio>';
 
                         let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
@@ -134,23 +141,29 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
-                        xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        if (object.prestador.cnpj && object.prestador.cnpj.trim() != '') {
+                            xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
+                        }
+                        if (object.prestador.inscricaoMunicipal && object.prestador.inscricaoMunicipal.trim() != '') {
+                            xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        }
                         xmlContent += '</Prestador>';
-                        xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
+                        if (object.protocolo && object.protocolo.trim() != '') {
+                            xmlContent += '<Protocolo>' + object.protocolo + '</Protocolo>';
+                        }
                         xmlContent += '</ConsultarLoteRpsEnvio>';
 
-                        // validator.validateXML(xmlContent, __dirname + '/../../../../resources/xsd/rio-de-janeiro/tipos_nfse_v01.xsd', function (err, validatorResult) {
-                        //     if (err) {
-                        //         console.log(err);
-                        //         resolve(err);
-                        //     }
+                        validator.validateXML(xmlContent, __dirname + '/../../../../resources/xsd/catalao/nfse_v2_01.xsd', function (err, validatorResult) {
+                            if (err) {
+                                console.log(err);
+                                resolve(err);
+                            }
 
-                        //     if (!validatorResult.valid) {
-                        //         console.log(validatorResult);
-                        //         resolve(validatorResult);
-                        //     }
-                        // });
+                            if (!validatorResult.valid) {
+                                console.log(validatorResult);
+                                resolve(validatorResult);
+                            }
+                        });
 
                         let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                         xml += '<soapenv:Header/>';
@@ -185,13 +198,23 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarNfseRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<IdentificacaoRps>';
-                        xmlContent += '<Numero>' + object.identificacaoRps.numero + '</Numero>';
-                        xmlContent += '<Serie>' + object.identificacaoRps.serie + '</Serie>';
-                        xmlContent += '<Tipo>' + object.identificacaoRps.tipo + '</Tipo>';
+                        if (object.identificacaoRps.numero && object.identificacaoRps.numero.trim() != '') {
+                            xmlContent += '<Numero>' + object.identificacaoRps.numero + '</Numero>';
+                        }
+                        if (object.identificacaoRps.serie && object.identificacaoRps.serie.trim() != '') {
+                            xmlContent += '<Serie>' + object.identificacaoRps.serie + '</Serie>';
+                        }
+                        if (object.identificacaoRps.tipo && object.identificacaoRps.tipo.trim() != '') {
+                            xmlContent += '<Tipo>' + object.identificacaoRps.tipo + '</Tipo>';
+                        }
                         xmlContent += '</IdentificacaoRps>';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
-                        xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        if (object.prestador.cnpj && object.prestador.cnpj.trim() != '') {
+                            xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
+                        }
+                        if (object.prestador.inscricaoMunicipal && object.prestador.inscricaoMunicipal.trim() != '') {
+                            xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        }
                         xmlContent += '</Prestador>';
                         xmlContent += '</ConsultarNfseRpsEnvio>';
 
@@ -223,22 +246,32 @@ function createXml(object, action) {
                     try {
                         let xmlContent = '<ConsultarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
                         xmlContent += '<Prestador>';
-                        xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
-                        xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        if (object.prestador.cnpj && object.prestador.cnpj.trim() != '') {
+                            xmlContent += '<Cnpj>' + object.prestador.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
+                        }
+                        if (object.prestador.inscricaoMunicipal && object.prestador.inscricaoMunicipal.trim() != '') {
+                            xmlContent += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
+                        }
                         xmlContent += '</Prestador>';
                         xmlContent += '<PeriodoEmissao>';
-                        xmlContent += '<DataInicial>' + object.periodoEmissao.dataInicial + '</DataInicial>';
-                        xmlContent += '<DataFinal>' + object.periodoEmissao.dataFinal + '</DataFinal>';
+                        if (object.periodoEmissao.dataInicial && object.periodoEmissao.dataInicial.trim() != '') {
+                            xmlContent += '<DataInicial>' + object.periodoEmissao.dataInicial + '</DataInicial>';
+                        }
+                        if (object.periodoEmissao.dataFinal && object.periodoEmissao.dataFinal.trim() != '') {
+                            xmlContent += '<DataFinal>' + object.periodoEmissao.dataFinal + '</DataFinal>';
+                        }
                         xmlContent += '</PeriodoEmissao>';
                         xmlContent += '<Tomador>';
-                        xmlContent += '<CpfCnpj>';
-                        if (object.tomador.cpfCnpj.length === 11) {
-                            xmlContent += '<Cpf>' + object.tomador.cpfCnpj + '</Cpf>';
+                        if (object.tomador.cpfCnpj && object.tomador.cpfCnpj.trim() != '') {
+                            xmlContent += '<CpfCnpj>';
+                            if (object.tomador.cpfCnpj.length === 11) {
+                                xmlContent += '<Cpf>' + object.tomador.cpfCnpj + '</Cpf>';
+                            }
+                            if (object.tomador.cpfCnpj.length === 14) {
+                                xmlContent += '<Cnpj>' + object.tomador.cpfCnpj + '</Cnpj>';
+                            }
+                            xmlContent += '</CpfCnpj>';
                         }
-                        if (object.tomador.cpfCnpj.length === 14) {
-                            xmlContent += '<Cnpj>' + object.tomador.cpfCnpj + '</Cnpj>';
-                        }
-                        xmlContent += '</CpfCnpj>';
                         xmlContent += '</Tomador>';
                         xmlContent += '</ConsultarNfseEnvio>';
 
@@ -269,33 +302,43 @@ function createXml(object, action) {
                 case 'cancelInvoice':
                     try {
                         let xml = '<Pedido xmlns="http://www.abrasf.org.br/nfse.xsd">';
-                        xml += '<InfPedidoCancelamento Id="Cancelamento_NF' + object.numeroNfse + '">';
+                        if (object.numeroNfse && object.numeroNfse.trim() != '') {
+                            xml += '<InfPedidoCancelamento Id="Cancelamento_NF' + object.numeroNfse + '">';
+                        }
                         xml += '<IdentificacaoNfse>';
-                        xml += '<Numero>' + object.numeroNfse + '</Numero>';
-                        xml += '<Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
-                        if (object.prestador.inscricaoMunicipal || object.prestador.inscricaoMunicipal != '') {
+                        if (object.numeroNfse && object.numeroNfse.trim() != '') {
+                            xml += '<Numero>' + object.numeroNfse + '</Numero>';
+                        }
+                        if (object.prestador.cnpj && object.prestador.cnpj.trim() != '') {
+                            xml += '<Cnpj>' + object.prestador.cnpj.replace(/\.|\/|\-|\s/g, '') + '</Cnpj>';
+                        }
+                        if (object.prestador.inscricaoMunicipal && object.prestador.inscricaoMunicipal.trim() != '') {
                             xml += '<InscricaoMunicipal>' + object.prestador.inscricaoMunicipal + '</InscricaoMunicipal>';
                         }
-                        xml += '<CodigoMunicipio>' + object.config.codigoMunicipio + '</CodigoMunicipio>';
+                        if (object.config.codigoMunicipio && object.config.codigoMunicipio.trim() != '') {
+                            xml += '<CodigoMunicipio>' + object.config.codigoMunicipio + '</CodigoMunicipio>';
+                        }
                         xml += '</IdentificacaoNfse>';
-                        xml += '<CodigoCancelamento>' + object.codigoCancelamento + '</CodigoCancelamento>';
+                        if (object.codigoCancelamento && object.codigoCancelamento.trim() != '') {
+                            xml += '<CodigoCancelamento>' + object.codigoCancelamento + '</CodigoCancelamento>';
+                        }
                         xml += '</InfPedidoCancelamento>';
                         xml += '</Pedido>';
 
                         createSignature(xml, cert, 'InfPedidoCancelamento').then(xmlSignature => {
-                            // validator.validateXML(xml, __dirname + '/../../resources/xsd/servico_enviar_lote_rps_envio_v03.xsd', function (err, result) {
-                            //     if (err) {
-                            //         return res.send({
-                            //             error: result
-                            //         })
-                            //     }
+                            validator.validateXML(xml, __dirname + '/../../resources/xsd/catalao/nfse_v2_01.xsd', function (err, result) {
+                                if (err) {
+                                    return res.send({
+                                        error: result
+                                    })
+                                }
 
-                            //     if (!result.valid) {
-                            //         return res.send({
-                            //             invalid: result
-                            //         })
-                            //     }
-                            // });
+                                if (!result.valid) {
+                                    return res.send({
+                                        invalid: result
+                                    })
+                                }
+                            });
 
                             let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                             xml += '<soapenv:Header/>';
@@ -342,19 +385,19 @@ function createXml(object, action) {
                                 });
 
                                 xmlContent += '</GerarNfseEnvio>';
-                                // validator.validateXML(xml, __dirname + '/../../resources/xsd/servico_enviar_lote_rps_envio_v03.xsd', function (err, result) {
-                                //     if (err) {
-                                //         return res.send({
-                                //             error: result
-                                //         })
-                                //     }
+                                validator.validateXML(xml, __dirname + '/../../resources/xsd/catalao/nfse_v2_01.xsd', function (err, result) {
+                                    if (err) {
+                                        return res.send({
+                                            error: result
+                                        })
+                                    }
 
-                                //     if (!result.valid) {
-                                //         return res.send({
-                                //             invalid: result
-                                //         })
-                                //     }
-                                // });
+                                    if (!result.valid) {
+                                        return res.send({
+                                            invalid: result
+                                        })
+                                    }
+                                });
 
                                 let xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://services.nfse">';
                                 xml += '<soapenv:Header/>';
@@ -402,7 +445,7 @@ function addSignedXml(object, cert) {
         object.rps.forEach((r, index) => {
             let prestadorCnpj = object.emissor.cnpj.replace(/[^\d]+/g,'');
             let prestadorIncricaoMunicipal = object.emissor.inscricaoMunicipal;
-            if (r.prestador) {
+            if (r.prestador && r.prestador.trim() != '') {
                 prestadorCnpj = r.prestador.cnpj.replace(/[^\d]+/g,'');
                 prestadorIncricaoMunicipal = r.prestador.inscricaoMunicipal;
             }
@@ -411,33 +454,77 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '<IdentificacaoRps>';
             xmlToBeSigned += '<Numero>' + timestamp + index + '</Numero>';
             xmlToBeSigned += '<Serie>RPS</Serie>';
-            xmlToBeSigned += '<Tipo>' + r.tipo + '</Tipo>';
+            if (r.tipo && r.tipo.trim() != '') {
+                xmlToBeSigned += '<Tipo>' + r.tipo + '</Tipo>';
+            }
             xmlToBeSigned += '</IdentificacaoRps>';
-            xmlToBeSigned += '<DataEmissao>' + r.dataEmissao.replace(/\s/g, 'T') + '</DataEmissao>';
-            xmlToBeSigned += '<NaturezaOperacao>' + r.naturezaOperacao + '</NaturezaOperacao>';
-            xmlToBeSigned += '<OptanteSimplesNacional>' + r.optanteSimplesNacional + '</OptanteSimplesNacional>';
-            xmlToBeSigned += '<IncentivadorCultural>' + r.incentivadorCultural + '</IncentivadorCultural>';
-            xmlToBeSigned += '<Status>' + r.status + '</Status>';
+            if (r.dataEmissao && r.dataEmissao.trim() != '') {
+                xmlToBeSigned += '<DataEmissao>' + r.dataEmissao.replace(/\s/g, 'T') + '</DataEmissao>';
+            }
+            if (r.naturezaOperacao && r.naturezaOperacao.trim() != '') {
+                xmlToBeSigned += '<NaturezaOperacao>' + r.naturezaOperacao + '</NaturezaOperacao>';
+            }
+            if (r.optanteSimplesNacional && r.optanteSimplesNacional.trim() != '') {
+                xmlToBeSigned += '<OptanteSimplesNacional>' + r.optanteSimplesNacional + '</OptanteSimplesNacional>';
+            }
+            if (r.incentivadorCultural && r.incentivadorCultural.trim() != '') {
+                xmlToBeSigned += '<IncentivadorCultural>' + r.incentivadorCultural + '</IncentivadorCultural>';
+            }
+            if (r.status && r.status.trim() != '') {
+                xmlToBeSigned += '<Status>' + r.status + '</Status>';
+            }
             
             xmlToBeSigned += '<Servico>';
             xmlToBeSigned += '<Valores>';
-            xmlToBeSigned += '<ValorServicos>' + r.servico.valorServicos + '</ValorServicos>';
-            xmlToBeSigned += '<ValorDeducoes>' + r.servico.valorDeducoes + '</ValorDeducoes>';
-            xmlToBeSigned += '<ValorPis>' + r.servico.valorPis + '</ValorPis>';
-            xmlToBeSigned += '<ValorCofins>' + r.servico.valorCofins + '</ValorCofins>';
-            xmlToBeSigned += '<ValorInss>' + r.servico.valorInss + '</ValorInss>';
-            xmlToBeSigned += '<ValorIr>' + r.servico.valorIr + '</ValorIr>';
-            xmlToBeSigned += '<ValorCsll>' + r.servico.valorCsll + '</ValorCsll>';
-            xmlToBeSigned += '<IssRetido>' + r.servico.issRetido + '</IssRetido>';
-            xmlToBeSigned += '<ValorIss>' + r.servico.valorIss + '</ValorIss>';
-            xmlToBeSigned += '<BaseCalculo>' + r.servico.baseCalculo + '</BaseCalculo>';
-            xmlToBeSigned += '<Aliquota>' + r.servico.aliquota + '</Aliquota>';
-            xmlToBeSigned += '<ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ValorLiquidoNfse>';
+            if (r.servico.valorServicos && r.servico.valorServicos.trim() != '') {
+                xmlToBeSigned += '<ValorServicos>' + r.servico.valorServicos + '</ValorServicos>';
+            }
+            if (r.servicos.valorDeducoes && r.servicos.valorDeducoes.trim() != '') {
+                xmlToBeSigned += '<ValorDeducoes>' + r.servico.valorDeducoes + '</ValorDeducoes>';
+            }
+            if (r.servicos.valorPis && r.servicos.valorPis.trim() != '') {
+                xmlToBeSigned += '<ValorPis>' + r.servico.valorPis + '</ValorPis>';
+            }
+            if (r.servicos.valorCofins && r.servicos.valorCofins.trim() != '') {
+                xmlToBeSigned += '<ValorCofins>' + r.servico.valorCofins + '</ValorCofins>';
+            }
+            if (r.servicos.valorInss && r.servicos.valorInss.trim() != '') {
+                xmlToBeSigned += '<ValorInss>' + r.servico.valorInss + '</ValorInss>';
+            }
+            if (r.servicos.valorIr && r.servicos.valorIr.trim() != '') {
+                xmlToBeSigned += '<ValorIr>' + r.servico.valorIr + '</ValorIr>';
+            }
+            if (r.servicos.valorCsll && r.servicos.valorCsll.trim() != '') {
+                xmlToBeSigned += '<ValorCsll>' + r.servico.valorCsll + '</ValorCsll>';
+            }
+            if (r.servicos.issRetido && r.servicos.issRetido.trim() != '') {
+                xmlToBeSigned += '<IssRetido>' + r.servico.issRetido + '</IssRetido>';
+            }
+            if (r.servicos.valorIss && r.servicos.valorIss.trim() != '') {
+                xmlToBeSigned += '<ValorIss>' + r.servico.valorIss + '</ValorIss>';
+            }
+            if (r.servicos.baseCalculo && r.servicos.baseCalculo.trim() != '') {
+                xmlToBeSigned += '<BaseCalculo>' + r.servico.baseCalculo + '</BaseCalculo>';
+            }
+            if (r.servicos.aliquota && r.servicos.aliquota.trim() != '') {
+                xmlToBeSigned += '<Aliquota>' + r.servico.aliquota + '</Aliquota>';
+            }
+            if (r.servicos.valorLiquidoNfse && r.servicos.valorLiquidoNfse.trim() != '') {
+                xmlToBeSigned += '<ValorLiquidoNfse>' + r.servico.valorLiquidoNfse + '</ValorLiquidoNfse>';
+            }
             xmlToBeSigned += '</Valores>';
-            xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico.replace(/[^\d]+/g,'') + '</ItemListaServico>';
-            xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio.replace(/[^\d]+/g,'') + '</CodigoTributacaoMunicipio>';
-            xmlToBeSigned += '<Discriminacao>' + r.servico.discriminacao + '</Discriminacao>';
-            xmlToBeSigned += '<CodigoMunicipio>' + r.servico.codigoMunicipio + '</CodigoMunicipio>';
+            if (r.servicos.itemListaServico && r.servicos.itemListaServico.trim() != '') {
+                xmlToBeSigned += '<ItemListaServico>' + r.servico.itemListaServico.replace(/[^\d]+/g,'') + '</ItemListaServico>';
+            }
+            if (r.servicos.codigoTributacaoMunicipio && r.servicos.codigoTributacaoMunicipio.trim() != '') {
+                xmlToBeSigned += '<CodigoTributacaoMunicipio>' + r.servico.codigoTributacaoMunicipio.replace(/[^\d]+/g,'') + '</CodigoTributacaoMunicipio>';
+            }
+            if (r.servicos.discriminacao && r.servicos.discriminacao.trim() != '') {
+                xmlToBeSigned += '<Discriminacao>' + r.servico.discriminacao + '</Discriminacao>';
+            }
+            if (r.servicos.codigoMunicipio && r.servicos.codigoMunicipio.trim() != '') {
+                xmlToBeSigned += '<CodigoMunicipio>' + r.servico.codigoMunicipio + '</CodigoMunicipio>';
+            }
             xmlToBeSigned += '</Servico>';
             
 
@@ -447,23 +534,41 @@ function addSignedXml(object, cert) {
             xmlToBeSigned += '</Prestador>';
             xmlToBeSigned += '<Tomador>';
             xmlToBeSigned += '<IdentificacaoTomador>';
-            xmlToBeSigned += '<CpfCnpj>';
-            if (r.tomador.cnpjCpf.replace(/[^\d]+/g,'').length > 11) {
-                xmlToBeSigned += '<Cnpj>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cnpj>';
-            } else {
-                xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cpf>';
+            if (object.r.tomador.cnpjCpf && object.r.tomador.cnpjCpf.trim() != '') {
+                xmlToBeSigned += '<CpfCnpj>';
+                if (r.tomador.cnpjCpf.replace(/[^\d]+/g,'').length > 11) {
+                    xmlToBeSigned += '<Cnpj>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cnpj>';
+                } else {
+                    xmlToBeSigned += '<Cpf>' + r.tomador.cnpjCpf.replace(/[^\d]+/g,'') + '</Cpf>';
+                }
+                xmlToBeSigned += '</CpfCnpj>';
             }
-            xmlToBeSigned += '</CpfCnpj>';
-            xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
+            if (object.r.tomador.inscricaoMunicipal && object.r.tomador.inscricaoMunicipal.trim() != '') {
+                xmlToBeSigned += '<InscricaoMunicipal>' + r.tomador.inscricaoMunicipal + '</InscricaoMunicipal>';
+            }
             xmlToBeSigned += '</IdentificacaoTomador>';
-            xmlToBeSigned += '<RazaoSocial>' + r.tomador.razaoSocial + '</RazaoSocial>';
+            if (object.r.tomador.razaoSocial && object.r.tomador.razaoSocial.trim() != '') {
+                xmlToBeSigned += '<RazaoSocial>' + r.tomador.razaoSocial + '</RazaoSocial>';
+            }
             xmlToBeSigned += '<Endereco>';
-            xmlToBeSigned += '<Endereco>' + r.tomador.endereco.endereco + '</Endereco>';
-            xmlToBeSigned += '<Numero>' + r.tomador.endereco.numero + '</Numero>';
-            xmlToBeSigned += '<Bairro>' + r.tomador.endereco.bairro + '</Bairro>';
-            xmlToBeSigned += '<CodigoMunicipio>' + r.tomador.endereco.codigoMunicipio + '</CodigoMunicipio>';
-            xmlToBeSigned += '<Uf>' + r.tomador.endereco.uf + '</Uf>';
-            xmlToBeSigned += '<Cep>' + r.tomador.endereco.cep + '</Cep>';
+            if (object.r.tomador.endereco.endereco && object.r.tomador.endereco.endereco.trim() != '') {
+                xmlToBeSigned += '<Endereco>' + r.tomador.endereco.endereco + '</Endereco>';
+            }
+            if (object.r.tomador.endereco.numero && object.r.tomador.endereco.numero.trim() != '') {
+                xmlToBeSigned += '<Numero>' + r.tomador.endereco.numero + '</Numero>';
+            }
+            if (object.r.tomador.endereco.bairro && object.r.tomador.endereco.bairro.trim() != '') {
+                xmlToBeSigned += '<Bairro>' + r.tomador.endereco.bairro + '</Bairro>';
+            }
+            if (object.r.tomador.codigoMunicipio && object.r.tomador.codigoMunicipio.trim() != '') {
+                xmlToBeSigned += '<CodigoMunicipio>' + r.tomador.endereco.codigoMunicipio + '</CodigoMunicipio>';
+            }
+            if (object.r.tomador.endereco.uf && object.r.tomador.endereco.uf.trim() != '') {
+                xmlToBeSigned += '<Uf>' + r.tomador.endereco.uf + '</Uf>';
+            }
+            if (object.r.tomador.endereco.cep && object.r.tomador.endereco.cep.trim() != '') {
+                xmlToBeSigned += '<Cep>' + r.tomador.endereco.cep + '</Cep>';
+            }
             xmlToBeSigned += '</Endereco>';
             xmlToBeSigned += '<Contato>';
             if (r.tomador.contato.telefone && r.tomador.contato.telefone != '') {

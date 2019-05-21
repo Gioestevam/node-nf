@@ -1,5 +1,6 @@
 const citiesJSON = require('../../resources/json/cities.json');
-var ginfes = require('../templates/nfse/xml/ginfes'),
+var catalao = require('../templates/nfse/xml/catalao'),
+    ginfes = require('../templates/nfse/xml/ginfes'),
     portoAlegre = require('../templates/nfse/xml/porto-alegre'),
     rioDeJaneiro = require('../templates/nfse/xml/rio-de-janeiro'),
     saoPaulo = require('../templates/nfse/xml/sao-paulo'),
@@ -30,7 +31,7 @@ function chooseModel(object, action) {
         }
 
         if (keyword === 'catalao') {
-            ginfes.createXml(object, action)
+            catalao.createXml(object, action)
                 .then(xmlFromCatalao => {
                     resolve(xmlFromCatalao);
                 })
