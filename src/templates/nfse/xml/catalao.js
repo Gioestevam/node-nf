@@ -34,7 +34,7 @@ function createXml(object, action) {
                 case 'postLotInvoice':
                     try {
                         let xml = '<EnviarLoteRpsEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">';
-                        xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '">';
+                        xml += '<LoteRps Id="' + object.emissor.cnpj.replace(/[^\d]+/g,'') + timestamp + '"  versao="2.01" >';
                         xml += '<NumeroLote>' + numeroLote + '</NumeroLote>';
                         xml += '<Cnpj>' + object.emissor.cnpj.replace(/[^\d]+/g,'') + '</Cnpj>';
                         if (object.emissor.inscricaoMunicipal && object.emissor.inscricaoMunicipal.trim() != '') {
